@@ -44,3 +44,15 @@ body{
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
+
+
+.nav-glow {
+  @apply transition-all duration-300 ease-out rounded-lg px-3 py-1;
+}
+
+.nav-glow:hover {
+  background: rgba(253, 199, 1, 0.15); /* soft yellow tint */
+  box-shadow: 0 0 12px rgba(253, 199, 1, 0.4);
+  transform: scale(1.05);
+  cursor: pointer;
+}

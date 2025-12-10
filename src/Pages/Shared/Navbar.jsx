@@ -3,9 +3,22 @@ import { Link } from 'react-router';
 import Logo from '../../Components/Logo';
 
 const Navbar = () => {
+const menu = (
+  <>
+  <Link to="/">
+    <li className="nav-glow">Home</li></Link>
+  <Link to="/">
+    <li className="nav-glow">All Contests</li>
+  </Link>
+  <Link to="/">
+    <li className="nav-glow">Extra Section</li>
+  </Link>
+  </>
+);
+
     return (
         <div>
-           <div className="navbar bg-base-100 shadow-sm">
+           <div className="navbar bg-base-100">
   <div className="navbar-start">
     <div className="dropdown">
       <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -13,23 +26,24 @@ const Navbar = () => {
       </div>
       <ul
         tabIndex="-1"
-        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
+        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow gap-3 font-semibold">
        
-
+        {menu}
 
       </ul>
     </div>
     <Logo></Logo>
   </div>
   <div className="navbar-center hidden lg:flex">
-    <ul className="menu menu-horizontal px-1">
+    <ul className=" menu menu-horizontal px-1 gap-5 font-semibold text-[#3D3D3D] text-[16px]">
      
-
+        {menu}
 
     </ul>
   </div>
-  <div className="navbar-end">
-    <a className="btn">Button</a>
+  <div className="navbar-end gap-5">
+    <Link to="/register" className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-300">Register</Link>
+    <Link to="/login" className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-400">Log In</Link>
   </div>
 </div>
         </div>
