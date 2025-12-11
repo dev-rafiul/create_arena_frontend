@@ -3,11 +3,11 @@ import { useForm } from "react-hook-form";
 
 const AddContest = () => {
 
-   const { register, handleSubmit } = useForm();
+   const { register, handleSubmit, formState: {errors}} = useForm();
 
 
-   const handleSendRequest = () => {
-
+   const handleSendRequest = (data) => {
+    console.log(data)
    }
 
 
@@ -29,6 +29,7 @@ const AddContest = () => {
               className={inputBase}
               {...register("name", { required: true })}
             />
+            {errors.name?.type === "required" && <p className='mt-1 text-red-500 text-xs'>Name Required</p>}
           </div>
 
           <div className="w-full">
@@ -36,13 +37,14 @@ const AddContest = () => {
             <select
               className={inputBase}
               {...register("type", { required: true })}
-            >
+              >
               <option value="">Select</option>
               <option>Design</option>
               <option>Art</option>
               <option>Marketing</option>
               <option>Development</option>
             </select>
+                {errors.type?.type === "required" && <p className='mt-1 text-red-500 text-xs'>Type Required</p>}
           </div>
         </div>
 
@@ -53,7 +55,9 @@ const AddContest = () => {
             type="file"
             className={inputBase}
             {...register("image", { required: true })}
-          />
+            />
+            {errors.image?.type === "required" && <p className='mt-1 text-red-500 text-xs'>Photo Required</p>}
+          {}
         </div>
 
 
@@ -63,7 +67,8 @@ const AddContest = () => {
             rows="3"
             className={inputBase}
             {...register("description", { required: true })}
-          />
+            />
+            {errors.description?.type === "required" && <p className='mt-1 text-red-500 text-xs'>Description Required</p>}
         </div>
 
         
@@ -74,7 +79,8 @@ const AddContest = () => {
               type="number"
               className={inputBase}
               {...register("price", { required: true })}
-            />
+              />
+              {errors.price?.type === "required" && <p className='mt-1 text-red-500 text-xs'>Price Required</p>}
           </div>
 
           <div className="w-full">
@@ -83,7 +89,8 @@ const AddContest = () => {
               type="number"
               className={inputBase}
               {...register("prizeMoney", { required: true })}
-            />
+              />
+              {errors.price?.type === "required" && <p className='mt-1 text-red-500 text-xs'>Prize Money Required</p>}
           </div>
         </div>
 
@@ -94,7 +101,8 @@ const AddContest = () => {
             rows="3"
             className={inputBase}
             {...register("taskInstruction", { required: true })}
-          />
+            />
+            {errors.price?.type === "required" && <p className='mt-1 text-red-500 text-xs'>Task Instruction Required</p>}
         </div>
 
         
@@ -104,7 +112,8 @@ const AddContest = () => {
             type="date"
             className={inputBase}
             {...register("deadline", { required: true })}
-          />
+            />
+            {errors.price?.type === "required" && <p className='mt-1 text-red-500 text-xs'>Deadline Required</p>}
         </div>
 
 
