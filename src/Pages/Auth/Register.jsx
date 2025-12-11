@@ -1,17 +1,43 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
+import useAuth from '../../hooks/useAuth';
 
 const Register = () => {
       const [showPassword, setShowPassword] = useState(false);
-
-    const {register} =  useForm()
+    const {registerUser, signInGoogle} = useAuth()
+    const {
+        register,
+        handleSubmit,
+        formState: {errors}
+    } =  useForm()
       
+
+    const handleRegistration = (data) => {
+        console.log('after register', data)
+        registerUser(data.email, data.password)
+        .then(result => {
+          console.log(result.user)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+
+    const handleGoogleSignIn = () => {
+      signInGoogle()
+      .then(result => {
+        console.log(result.user)
+      })
+      .catch(errors => {
+        console.log(errors)
+      })
+    }
     
     return (
         <div>
-        <div className="w-full flex justify-center py-3">
-      <form className="w-full max-w-md space-y-6 -mt-7">
+        <div className="w-full justify-center py-3 grid grid-cols-1 lg:ml-20">
+      <form onSubmit={handleSubmit(handleRegistration)} className="w-full max-w-md space-y-6 -mt-7">
         <h4 className='text-4xl text-center mb-9 font-bold'>Create an Account</h4>
         <p className='-mt-5 text-center mb-10 font-semibold'>Register With  <span className='font-bold text-xl'>Create Arena</span></p>
         
@@ -37,8 +63,10 @@ const Register = () => {
           <label className="text-xs font-semibold">EMAIL</label>
           <input
             type="email"
+            {...register('email', {required: true})}
             className="w-full border-b border-gray-300 focus:outline-none py-1"
-          />
+            />
+            {errors.email?.type === "required" && <p className='text-xs text-red-500 mt-1'> Email is Required.</p>}
         </div>
         <div>
           <label className="text-xs font-semibold">PHONE NUMBER</label>
@@ -51,8 +79,17 @@ const Register = () => {
           <label className="text-xs font-semibold">PASSWORD</label>
           <input
             type={showPassword ? "text" : "password"}
+            {...register("password", {
+                required: true,
+                minLength: 6,
+                pattern: /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&#^(){}[\]_+=\-<>.,;:]).{6,}$/
+
+            })}
             className="w-full border-b border-gray-300 focus:outline-none py-1 pr-10"
           />
+          {errors.password?.type === 'required' && <p className='text-xs text-red-500 mt-1'>Password is Required</p>}
+          {errors.password?.type === 'minLength' && <p className='text-xs text-red-500 mt-1'>Password Must be 6 Characters or longer</p>}
+          {errors.password?.type === 'pattern' && <p className='text-xs text-red-500 mt-1'>Must have uppercase lowercase symbol and number</p>}
           <span
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-0 bottom-1 cursor-pointer text-gray-500"
@@ -89,6 +126,7 @@ const Register = () => {
           <label className="text-xs font-semibold">CONFIRM PASSWORD</label>
           <input
             type={showPassword ? "text" : "password"}
+            {...register('confirmPassword', {required: true})}
             className="w-full border-b border-gray-300 focus:outline-none py-1 pr-10"
           />
           <span
@@ -136,12 +174,14 @@ const Register = () => {
 
       <p className='text-center font-bold text-gray-500'>OR</p>
 <div>
-      <button className="btn w-full rounded-3xl bg-gray-200 text-black border-[#e5e5e5]">
+</div>
+      </form>
+      
+      <button onClick={handleGoogleSignIn} className="btn max-w-[450px] rounded-3xl bg-gray-200 text-black border-[#e5e5e5]">
   <svg aria-label="Google logo" width="16" height="16" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><g><path d="m0 0H512V512H0" fill="#fff"></path><path fill="#34a853" d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"></path><path fill="#4285f4" d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"></path><path fill="#fbbc02" d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"></path><path fill="#ea4335" d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"></path></g></svg>
   Register with Google
 </button>
-</div>
-      </form>
+      {/* </div> */}
     </div>
         </div>
     );

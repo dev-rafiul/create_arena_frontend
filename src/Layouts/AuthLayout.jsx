@@ -10,10 +10,10 @@ const AuthLayout = () => {
             <Logo></Logo>
             </div>
             <div className='grid md:grid-cols-2 grid-cols-1 justify-between gap-15'>
-                <div className='-mt-9 order-2'>
+                <div className='-mt-9 md:mt-27 lg:-mt-16 order-2'>
                     <img src={banner2} alt="" />
                 </div>
-                <div className='mt-19 mx-10 order-1'>
+                <div className='mt-19 lg:mx-30 mx-10 order-1 '>
                     <Outlet></Outlet>
                 </div>
             </div>

@@ -1,12 +1,46 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
+import useAuth from "../../hooks/useAuth";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
+
+
+    const {signInUser, signInGoogle} = useAuth()
+    const {
+        register,
+        handleSubmit,
+        formState: {errors}
+    } =  useForm()
+      
+
+    const handleLogin = (data) => {
+        console.log('after register', data)
+        signInUser(data.email, data.password)
+        .then(result => {
+          console.log(result.user)
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+
+
+    const handleGoogleSignIn = () => {
+      signInGoogle()
+      .then(result => {
+        console.log(result.user)
+      })
+      .catch(error => {
+      console.log(error)
+      })
+    }
+
   return (
-    <div className="w-full flex justify-center py-10">
-      <form className="w-full max-w-md space-y-6">
+    <div className="w-full grid grid-cols-1 justify-center items-center py-10">
+      <form onSubmit={handleSubmit(handleLogin)} className="w-full max-w-md space-y-6">
         <h4 className="text-4xl text-center mb-12 font-bold">Welcome Back!</h4>
         <p className="-mt-5 text-center mb-10 font-semibold">
           Login to <span className="font-bold text-xl">Create Arena</span>
@@ -15,18 +49,22 @@ const Login = () => {
         <div>
           <label className="text-xs font-semibold">EMAIL</label>
           <input
-            type="email"
-            className="w-full border-b border-gray-300 focus:outline-none py-1"
+          {...register('email', {required: true, })}
+          type="email"
+          className="w-full border-b border-gray-300 focus:outline-none py-1"
           />
+          {errors.email?.type === 'required' && <p className="text-red-500 text-xs mt-1">Email is Required</p>}
         </div>
 
     
         <div className="relative">
           <label className="text-xs font-semibold">PASSWORD</label>
           <input
+          {...register('password', {required: true, minLength: 6})}
             type={showPassword ? "text" : "password"}
             className="w-full border-b border-gray-300 focus:outline-none py-1 pr-10"
           />
+          
           <span
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-0 bottom-1 cursor-pointer text-gray-500"
@@ -59,6 +97,8 @@ const Login = () => {
             )}
           </span>
         </div>
+          {errors.password?.type === 'required' && <p className="text-red-500 text-xs -mt-5">Password Required</p>}
+          {errors.password?.type === 'minLength' && <p className="text-red-500 text-xs -mt-4">Password Must be 6 Character or longer</p>}
 
         <div className="text-right -mt-4">
           <Link to="/forgot-password" className="text-secondary underline text-sm">
@@ -82,7 +122,8 @@ const Login = () => {
 
         <p className="text-center font-bold text-gray-500">OR</p>
 
-        <button className="btn w-full rounded-3xl bg-gray-200 text-black border-[#e5e5e5]">
+      </form>
+        <button onClick={handleGoogleSignIn} className="btn max-w-[450px] rounded-3xl bg-gray-200 text-black border-[#e5e5e5]">
           <svg
             aria-label="Google logo"
             width="16"
@@ -113,7 +154,6 @@ const Login = () => {
           </svg>
           Login with Google
         </button>
-      </form>
     </div>
   );
 };
