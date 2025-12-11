@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import useAuth from "../../hooks/useAuth";
 import { useForm } from "react-hook-form";
 
@@ -7,6 +7,9 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
 
+  const location = useLocation()
+  const navigate = useNavigate()
+  console.log(location )
 
     const {signInUser, signInGoogle} = useAuth()
     const {
@@ -21,17 +24,19 @@ const Login = () => {
         signInUser(data.email, data.password)
         .then(result => {
           console.log(result.user)
+          navigate(location?.state || '/')
         })
         .catch(error => {
           console.log(error)
         })
-    }
-
-
-    const handleGoogleSignIn = () => {
-      signInGoogle()
-      .then(result => {
-        console.log(result.user)
+      }
+      
+      
+      const handleGoogleSignIn = () => {
+        signInGoogle()
+        .then(result => {
+          console.log(result.user)
+          navigate(location?.state || '/')
       })
       .catch(error => {
       console.log(error)

@@ -4,6 +4,11 @@ import Home from "../Pages/Home/Home";
 import AuthLayout from "../Layouts/AuthLayout";
 import Login from "../Pages/Auth/Login";
 import Register from "../Pages/Auth/Register";
+import DashboardHome from "../Pages/Dashboard/DashboardHome";
+import AddContest from "../Pages/AddContest/AddContest";
+import AllContests from "../Pages/AllContests/AllContests";
+import Leaderboard from "../Pages/Leaderboard/Leaderboard";
+import PrivateRoute from "./PrivateRoute";
 
 
 
@@ -25,7 +30,28 @@ export const router = createBrowserRouter([
             {
                 index: true,
                 Component: Home
-            }
+            },
+            {
+                path: 'dashboard',
+                Component: DashboardHome
+            },
+            {
+                path: 'add_contest',
+                // Component: AddContest
+                element: <PrivateRoute>
+                    <AddContest></AddContest>
+                </PrivateRoute>
+            },
+            {
+                path: 'all_contests',
+                Component: AllContests
+            },
+            {
+                path: 'leaderboard',
+                element: <PrivateRoute>
+                    <Leaderboard></Leaderboard>
+                </PrivateRoute>
+            },
         ]
     },
     {

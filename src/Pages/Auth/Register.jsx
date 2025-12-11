@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router';
 import useAuth from '../../hooks/useAuth';
+import { Link } from 'react-router';
+import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+import axios from 'axios';
+
+
 
 const Register = () => {
       const [showPassword, setShowPassword] = useState(false);
-    const {registerUser, signInGoogle} = useAuth()
+      const navigate = useNavigate();
+
+    const {registerUser, signInGoogle, updateUserProfile} = useAuth()
     const {
         register,
         handleSubmit,
@@ -14,10 +21,41 @@ const Register = () => {
       
 
     const handleRegistration = (data) => {
-        console.log('after register', data)
+        console.log('after register', data.photo[0])
+        const profileImg = data.photo[0]
         registerUser(data.email, data.password)
         .then(result => {
           console.log(result.user)
+          const formData = new FormData();
+          formData.append('image', profileImg);
+
+          const imageAPIURL = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_img_host_key}`
+
+          axios.post(imageAPIURL, formData)
+          .then(res => {
+            console.log("After image Upload", res.data.data.url)
+
+
+            const userProfile = {
+              displayName : data.name,
+              photoURL : res.data.data.url
+            }
+
+            updateUserProfile(userProfile)
+            .then(() => {
+              console.log('user profile updated done')
+            })
+            .catch(error => {
+              console.log(error)
+            })
+
+          })
+
+           toast.success("Account created successfully! ");
+
+      setTimeout(() => {
+        navigate("/");
+      }, 2000); 
         })
         .catch(error => {
           console.log(error)
@@ -27,7 +65,11 @@ const Register = () => {
     const handleGoogleSignIn = () => {
       signInGoogle()
       .then(result => {
-        console.log(result.user)
+        toast.success("Logged in with Google! ");
+      console.log(result.user)
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
       })
       .catch(errors => {
         console.log(errors)
@@ -53,10 +95,11 @@ const Register = () => {
           </div>
         </div>
         <div>
-          <label className="text-xs font-semibold">USERNAME</label>
+          <label className="text-xs font-semibold">IMAGE</label>
           <input
-            type="text"
-            className="w-full border-b border-gray-300 focus:outline-none py-1"
+            type="file"
+            {...register('photo', {required: true})}
+            className="w-full border-0 border-b border-gray-400 rounded-none focus:outline-none focus:border-black px-0 py-2"
           />
         </div>    
         <div>
@@ -71,7 +114,7 @@ const Register = () => {
         <div>
           <label className="text-xs font-semibold">PHONE NUMBER</label>
           <input
-            type="text"
+            type="number"
             className="w-full border-b border-gray-300 focus:outline-none py-1"
           />
         </div>

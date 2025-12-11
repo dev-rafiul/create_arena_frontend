@@ -1,17 +1,37 @@
 import React from 'react';
 import { Link } from 'react-router';
 import Logo from '../../Components/Logo';
+import useAuth from '../../hooks/useAuth';
 
 const Navbar = () => {
+
+  const {user, logOut} = useAuth()
+
+
+  const handleLogout = () => {
+    logOut()
+    .then()
+    .catch(error => {
+      console.log(error)
+    })
+  }
+
+
 const menu = (
   <>
   <Link to="/">
     <li className="nav-glow">Home</li></Link>
-  <Link to="/">
+  <Link to="/all_contests">
     <li className="nav-glow">All Contests</li>
   </Link>
-  <Link to="/">
-    <li className="nav-glow">Extra Section</li>
+  <Link to="/leaderboard">
+    <li className="nav-glow">Leaderboard</li>
+  </Link>
+  <Link to="/add_contest">
+    <li className="nav-glow">Add Contest</li>
+  </Link>
+  <Link to="/dashboard">
+    <li className="nav-glow">Dashboard</li>
   </Link>
   </>
 );
@@ -42,8 +62,19 @@ const menu = (
     </ul>
   </div>
   <div className="navbar-end gap-5">
-    <Link to="/register" className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-300">Register</Link>
-    <Link to="/login" className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-400">Log In</Link>
+
+
+    {
+      user ? ( <>
+      <Link to="/" onClick={handleLogout} className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-300">Log Out</Link>
+      </>
+      )
+      : ( <>
+      <Link to="/register" className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-300">Register</Link>
+      <Link to="/login" className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-400">Log In</Link> 
+      </>
+      )
+    }
   </div>
 </div>
         </div>
