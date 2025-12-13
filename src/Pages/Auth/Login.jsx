@@ -45,6 +45,8 @@ const Login = () => {
 
   return (
     <div className="w-full grid grid-cols-1 justify-center items-center py-10">
+                <title>Log In | Create Arena</title>
+
       <form onSubmit={handleSubmit(handleLogin)} className="w-full max-w-md space-y-6">
         <h4 className="text-4xl text-center mb-12 font-bold">Welcome Back!</h4>
         <p className="-mt-5 text-center mb-10 font-semibold">

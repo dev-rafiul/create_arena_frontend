@@ -2,10 +2,12 @@ import React from 'react';
 import { useForm } from "react-hook-form";
 import useAxiosSecure from '../../hooks/useAxiosSecure';
 import useAuth from '../../hooks/useAuth';
+import { toast } from 'react-hot-toast';
+
 
 const AddContest = () => {
 
-   const { register, handleSubmit, formState: {errors}} = useForm();
+   const { register, handleSubmit, formState: {errors}, reset} = useForm();
 
 
    const {user} = useAuth()
@@ -23,7 +25,11 @@ const AddContest = () => {
     }
     axiosSecure.post('/contests', contestData)
     .then(res => {
-        console.log('after saving add contests', res.data)
+      if(res.data.insertedId){
+        toast.success("Contest Added Successfully !")
+        reset()
+      }
+        // console.log('after saving add contests', res.data)
     })
    }
 

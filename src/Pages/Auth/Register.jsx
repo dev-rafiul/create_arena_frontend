@@ -78,6 +78,7 @@ const Register = () => {
     
     return (
         <div>
+          <title>Register | Create Arena</title>
         <div className="w-full justify-center py-3 grid grid-cols-1 lg:ml-20">
       <form onSubmit={handleSubmit(handleRegistration)} className="w-full max-w-md space-y-6 -mt-7">
         <h4 className='text-4xl text-center mb-9 font-bold'>Create an Account</h4>
