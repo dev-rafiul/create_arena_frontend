@@ -19,6 +19,8 @@ import PaymentCancelled from "../Pages/AllContests/PaymentCancelled";
 import PaymentHistory from "../Pages/Dashboard/PaymentHistory";
 import CreatorAccess from "../Pages/Dashboard/CreatorAccess";
 import ApproveCreators from "../Pages/Dashboard/ApproveCreators";
+import AdminRoute from "./AdminRoute";
+// import ApproveCreators from './../Pages/Dashboard/ApproveCreators';
 
 export const router = createBrowserRouter([
   {
@@ -103,11 +105,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "manage_users",
-        Component: ManageUsers
+        element: <AdminRoute>
+          <ManageUsers></ManageUsers>
+        </AdminRoute>
       },
       {
         path: "manage_contests",
-        Component: ManageContests
+        element: <AdminRoute>
+          <ManageContests></ManageContests>
+        </AdminRoute>
       },
       {
         path: "payment_history",
@@ -115,7 +121,9 @@ export const router = createBrowserRouter([
       },
       {
         path: "approve_creators",
-        Component: ApproveCreators
+         element: <AdminRoute>
+          <ApproveCreators></ApproveCreators>
+        </AdminRoute>
       },
     ]
   }

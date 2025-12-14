@@ -46,21 +46,21 @@ const ManageContests = () => {
       
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-white shadow rounded-lg p-5">
-          <h4 className="text-sm text-gray-500">Pending</h4>
+          <h4 className="text-sm text-gray-500">Pending Contests</h4>
           <p className="text-2xl font-bold text-yellow-500">
             {contests.filter(c => c.status === "pending").length}
           </p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
-          <h4 className="text-sm text-gray-500">Approved</h4>
+          <h4 className="text-sm text-gray-500">Approved Contests</h4>
           <p className="text-2xl font-bold text-green-500">
             {contests.filter(c => c.status === "approved").length}
           </p>
         </div>
 
         <div className="bg-white shadow rounded-lg p-5">
-          <h4 className="text-sm text-gray-500">Rejected</h4>
+          <h4 className="text-sm text-gray-500">Rejected Contests</h4>
           <p className="text-2xl font-bold text-red-500">
             {contests.filter(c => c.status === "rejected").length}
           </p>
@@ -86,9 +86,9 @@ const ManageContests = () => {
               <th className="px-6 py-3">Contest Name</th>
               <th className="px-6 py-3">Type</th>
               <th className="px-6 py-3">Email</th>
-              <th className="px-6 py-3">Price</th>
-              <th className="px-6 py-3">Prize</th>
-              <th className="px-6 py-3">Status</th>
+              <th className="px-6 py-3 text-center">Price</th>
+              <th className="px-6 py-3 text-center">Prize</th>
+              <th className="px-6 py-3 text-center">Status</th>
               <th className="px-6 py-3 text-center">Action</th>
             </tr>
           </thead>
@@ -98,18 +98,18 @@ const ManageContests = () => {
               contests.map((contest) => (
                 <tr
                   key={contest._id}
-                  className="border-b hover:bg-gray-50"
+                  className="border-b border-gray-200 hover:bg-gray-50"
                 >
                   <td className="px-6 py-4 font-medium">
                     {contest.name}
                   </td>
                   <td className="px-6 py-4">{contest.type}</td>
                   <td className="px-6 py-4">{contest.email}</td>
-                  <td className="px-6 py-4">${contest.price}</td>
-                  <td className="px-6 py-4">${contest.prizeMoney}</td>
+                  <td className="px-6 py-4 text-center">${contest.price}</td>
+                  <td className="px-6 py-4 text-center">${contest.prizeMoney}</td>
 
              
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-4 text-center">
                     {contest.status === "pending" && (
                       <span className="px-3 py-1 rounded-full text-xs bg-yellow-100 text-yellow-600">
                         Pending
