@@ -1,3 +1,4 @@
+
 import { useQuery, useQueryClient } from '@tanstack/react-query'; 
 import React, { useState } from 'react'; 
 import useAxiosSecure from '../../hooks/useAxiosSecure'; 
@@ -21,11 +22,6 @@ const { data: creators = [], isLoading, isError, error } = useQuery({
     return res.data;
   },
 });
-
-
-
-
- 
         
         const pendingCreators = creators.filter(c => c.status === 'pending');
         const approvedCreators = creators.filter(c => c.status === 'approved');
@@ -157,7 +153,7 @@ const paginatedCreators = creators.slice(startIndex, endIndex);
     
       <div className="bg-white p-6 rounded-lg shadow-md">
         <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
-          Manage Pending Creator Requests ({creators.length})
+          Manage Creator Requests ({creators.length})
         </h2>
 
         {creators.length === 0 ? (

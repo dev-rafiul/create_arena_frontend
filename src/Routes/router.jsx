@@ -20,12 +20,15 @@ import PaymentHistory from "../Pages/Dashboard/PaymentHistory";
 import CreatorAccess from "../Pages/Dashboard/CreatorAccess";
 import ApproveCreators from "../Pages/Dashboard/ApproveCreators";
 import AdminRoute from "./AdminRoute";
+import Profile from "../Pages/Profile/Profile";
+import Forbidden from "../Pages/Shared/Forbidden";
 // import ApproveCreators from './../Pages/Dashboard/ApproveCreators';
 
 export const router = createBrowserRouter([
   {
     path: '/',
     Component: RootLayout,
+    errorElement: <Forbidden/>,
     children: [
       {
         index: true,
@@ -53,11 +56,16 @@ export const router = createBrowserRouter([
       },
       {
         path: 'contests/:contestId',
-        Component: ContestDetails
+        element: <PrivateRoute>
+          <ContestDetails/>
+        </PrivateRoute>
       },
       {
         path: 'payment/:contestId',
-        Component: Payment
+        element: <PrivateRoute>
+
+          <Payment/>
+        </PrivateRoute> 
       },
       {
         path: 'payment-success',
@@ -68,9 +76,16 @@ export const router = createBrowserRouter([
         Component: PaymentCancelled
       },
       {
-        path: 'leaderboard',
-        element: (
-          <PrivateRoute>
+        path: 'profile',
+        element: <PrivateRoute>
+          <Profile></Profile>
+        </PrivateRoute>
+          
+        },
+        {
+          path: 'leaderboard',
+          element: (
+            <PrivateRoute>
             <Leaderboard />
           </PrivateRoute>
         )
@@ -80,6 +95,7 @@ export const router = createBrowserRouter([
   {
     path: '/',
     Component: AuthLayout,
+    errorElement: <Forbidden/>,
     children: [
       {
         path: "login",
@@ -93,6 +109,7 @@ export const router = createBrowserRouter([
   },
   {
     path: 'dashboard',
+    errorElement: <Forbidden/>,
     element: (
       <PrivateRoute>
         <DashboardLayout />

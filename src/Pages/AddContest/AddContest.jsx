@@ -4,6 +4,7 @@ import useAxiosSecure from '../../hooks/useAxiosSecure';
 import useAuth from '../../hooks/useAuth';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
 
 const AddContest = () => {
 
@@ -13,6 +14,23 @@ const AddContest = () => {
 
   const imageHostingKey = import.meta.env.VITE_img_host_key;
   const imageHostingURL = `https://api.imgbb.com/1/upload?key=${imageHostingKey}`;
+
+
+
+
+  const { data: dbUser = {}, isLoading } = useQuery({
+  queryKey: ['me', user?.email],
+  enabled: !!user?.email,
+  queryFn: async () => {
+    const res = await axiosSecure.get(`/users/me/${user.email}`);
+    return res.data;
+  },
+});
+
+
+
+
+console.log(dbUser, isLoading)
 
   const handleSendRequest = async (data) => {
     try {
@@ -53,6 +71,20 @@ const AddContest = () => {
       toast.error("Something went wrong!");
     }
   };
+
+//   if (userRole !== 'creator') {
+//   return (
+//     <div className="text-center mt-20">
+//       <h2 className="text-2xl font-bold text-red-600">
+//         Access Denied
+//       </h2>
+//       <p className="text-gray-500 mt-2">
+//         Only approved creators can create contests.
+//       </p>
+//     </div>
+//   );
+// }
+
 
   const inputBase =
     "w-full border-0 border-b border-gray-400 rounded-none focus:outline-none focus:border-black px-0 py-2";

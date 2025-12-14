@@ -2,7 +2,6 @@ import React from 'react';
 import { Link, NavLink, Outlet } from 'react-router';
 import Logo from '../Components/Logo';
 import { FaMedal, FaRegCreditCard, FaUsers } from 'react-icons/fa';
-import { BiCheckCircle } from "react-icons/bi";
 import useRole from '../hooks/useRole';
 
 
@@ -35,7 +34,7 @@ const DashboardLayout = () => {
     <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
     <div className="flex min-h-full flex-col items-start bg-base-200 is-drawer-close:w-14 is-drawer-open:w-64">
       
-      <ul className="menu w-full grow">
+      <ul className="menu w-full grow gap-5 font-semibold">
         {/* List item */}
         <li>
             {/* <Link to='/'> */}
@@ -63,6 +62,13 @@ const DashboardLayout = () => {
         </li>
 
 
+
+
+
+
+
+
+
         <li>
             <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Manage Contests" to="/dashboard/manage_contests">
             <FaMedal/>
@@ -71,14 +77,50 @@ const DashboardLayout = () => {
         </li>
 
 
+        </>}
+       
 
-        <li>
-            <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Approve Creators" to="/dashboard/approve_creators">
-            <BiCheckCircle />
-            <span className='is-drawer-close:hidden'>Approve Creators</span>
+            {
+          role === "creator" && <>
+          
+
+          
+ <li>
+            <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Contest Management" to="/dashboard/contest_management">
+            <FaUsers/>
+            <span className='is-drawer-close:hidden'>Contest Management</span>
             </NavLink>
         </li>
-          </>}
+          
+          
+
+       
+
+
+        <li>
+            <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Contests Participants" to="/dashboard/contests_participants">
+            <FaMedal/>
+            <span className='is-drawer-close:hidden'>Contest Participants</span>
+            </NavLink>
+        </li>
+
+
+        </>}
+
+
+        {
+          role === "user" && <>
+          <li>
+            <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Joining Contest" to="/dashboard/joining_contests">
+            <FaMedal/>
+            <span className='is-drawer-close:hidden'>Joining Contest</span>
+            </NavLink>
+        </li>
+          
+          </>
+        }
+         
+
 
         <li>
             <NavLink className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Payment History" to="/dashboard/payment_history">

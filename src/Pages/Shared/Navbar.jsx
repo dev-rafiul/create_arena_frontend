@@ -2,12 +2,13 @@ import React from 'react';
 import { Link } from 'react-router';
 import Logo from '../../Components/Logo';
 import useAuth from '../../hooks/useAuth';
-import { AiOutlineLogin, AiOutlinePlus } from "react-icons/ai";
-import { FaHome } from 'react-icons/fa';
+import useRole from '../../hooks/useRole';
+
 
 const Navbar = () => {
 
   const {user, logOut} = useAuth()
+const { role } = useRole();
 
 
   const handleLogout = () => {
@@ -35,15 +36,26 @@ const menu = (
 
 
   {
-    user && <> 
+    role === "user" && <> 
+ 
+  <Link to="/creator_access">
+    <li className="nav-glow">Creator Access</li>
+  </Link>
+  
+    </>
+  }
+
+
+{role === "creator" && (
   <Link to="/add_contest">
     <li className="nav-glow">Add Contest</li>
   </Link>
-  <Link to="/dashboard">
-    <li className="nav-glow">Dashboard</li>
-  </Link>
-    </>
-  }
+)}
+
+
+
+
+
   </>
 );
 
@@ -75,22 +87,70 @@ const menu = (
   <div className="navbar-end gap-5">
 
 
-    {
-      user ? ( <>
-      <Link to="/" onClick={handleLogout} className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-300">
-      <AiOutlineLogin />
-      Log Out</Link>
-      <Link to="/creator_access" className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-300">
-      <AiOutlinePlus />
-      Creator Access</Link>
-      </>
-      )
-      : ( <>
-      <Link to="/register" className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-300">Register</Link>
-      <Link to="/login" className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-400">Log In</Link> 
-      </>
-      )
-    }
+   
+
+
+
+
+
+{
+  user ? (
+    <div className="dropdown dropdown-end">
+      <div
+        tabIndex={0}
+        role="button"
+        className="btn btn-ghost btn-circle avatar"
+      >
+        <div className="w-10 rounded-full">
+          <img
+            src={user?.photoURL || "https://i.ibb.co/ZYW3VTp/brown-brim.png"}
+            alt="User Profile"
+          />
+        </div>
+      </div>
+
+      <ul
+        tabIndex={0}
+        className="menu menu-sm dropdown-content mt-3 z-[1] p-3 shadow bg-base-100 rounded-box w-52 gap-2"
+      >
+        <li className="font-bold text-center text-gray-700 cursor-default">
+          <Link to="/profile" className='text-lg mt-2'>Profile</Link>
+          {/* {user?.displayName || "User"} */}
+        </li>
+
+        <div className="divider my-1"></div>
+
+        <li>
+          <Link className='font-semibold' to="/dashboard">Dashboard</Link>
+        </li>
+
+        <li>
+          <button onClick={handleLogout} className="text-red-500">
+            Logout
+          </button>
+        </li>
+      </ul>
+    </div>
+  ) : (
+    <>
+      <Link
+        to="/register"
+        className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-300"
+      >
+        Register
+      </Link>
+      <Link
+        to="/login"
+        className="btn hover:rounded-4xl hover:font-bold hover:bg-amber-400"
+      >
+        Log In
+      </Link>
+    </>
+  )
+}
+
+
+
   </div>
 </div>
         </div>
