@@ -16,7 +16,7 @@ import ContestDetails from "../Pages/AllContests/ContestDetails";
 import Payment from "../Pages/AllContests/Payment";
 import PaymentSuccess from "../Pages/AllContests/PaymentSuccess";
 import PaymentCancelled from "../Pages/AllContests/PaymentCancelled";
-import PaymentHistory from "../Pages/Dashboard/PaymentHistory";
+// import PaymentHistory from "../Pages/Dashboard/PaymentHistory";
 import CreatorAccess from "../Pages/Dashboard/CreatorAccess";
 import ApproveCreators from "../Pages/Dashboard/ApproveCreators";
 import AdminRoute from "./AdminRoute";
@@ -29,10 +29,9 @@ import ContestParticipants from "../Pages/Dashboard/CreatorsDashboard/ContestPar
 import MyContestParticipate from "../Pages/Dashboard/User/MyContestParticipate";
 import MyWinningContes from "../Pages/Dashboard/User/MyWinningContes";
 import MyProfile from "../Pages/Dashboard/User/MyProfile";
-// import MyContestParticipate from "../Pages/Dashboard/User/MyContestParticipate";
-// import MyProfile from "../Pages/Dashboard/User/MyProfile";
-// import MyWinningContes from "../Pages/Dashboard/User/MyWinningContes";
-// import MyProfile from './../Pages/Dashboard/User/MyProfile';
+// import PaymentHistory from './../Pages/Dashboard/PaymentHistory';
+import MyPaymentHistory from "../Pages/Dashboard/MyPaymentHistory";
+
 
 
 export const router = createBrowserRouter([
@@ -151,7 +150,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "payment_history",
-        Component: PaymentHistory
+        Component: MyPaymentHistory
       },
       {
         path: "approve_creators",

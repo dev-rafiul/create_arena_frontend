@@ -75,7 +75,9 @@ const menu = (
 
       </ul>
     </div>
+    <div className='md:ml-10'>
     <Logo></Logo>
+    </div>
   </div>
   <div className="navbar-center hidden lg:flex">
     <ul className=" menu menu-horizontal px-1 gap-5 font-semibold text-[#3D3D3D] text-[16px]">
@@ -113,8 +115,8 @@ const menu = (
         tabIndex={0}
         className="menu menu-sm dropdown-content mt-3 z-[1] p-3 shadow bg-base-100 rounded-box w-52 gap-2"
       >
-        <li className="font-bold text-center text-gray-700 cursor-default">
-          <Link to="/profile" className='text-lg mt-2'>Profile</Link>
+        <li className="font-bold text-center text-gray-700">
+          <span className='text-md mt-2'>{user?.displayName}</span>
           {/* {user?.displayName || "User"} */}
         </li>
 

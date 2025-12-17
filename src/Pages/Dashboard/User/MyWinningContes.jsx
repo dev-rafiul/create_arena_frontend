@@ -1,64 +1,53 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useAuth from "../../../hooks/useAuth";
 
-const MyWinningContes = () => {
-  const [winningContests, setWinningContests] = useState([]);
+const MyWinningContests = () => {
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+  const [wins, setWins] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Simulate fetching data (replace this with your actual API call)
   useEffect(() => {
-    async function fetchWinningContests() {
-      // Replace the URL with your real endpoint
-      try {
-        setLoading(true);
-        const res = await fetch('/api/my-winning-contests'); 
-        const data = await res.json();
-        setWinningContests(data);
-      } catch (error) {
-        console.error('Failed to fetch winning contests:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
+    if (!user?.email) return;
 
-    fetchWinningContests();
-  }, []);
+    axiosSecure
+      .get(`/my-winning-contests/${user.email}`)
+      .then(res => setWins(res.data))
+      .catch(err => console.error("Error fetching wins:", err))
+      .finally(() => setLoading(false));
+  }, [user?.email, axiosSecure]);
 
-  if (loading) return <p>Loading your winning contests...</p>;
-
-  if (winningContests.length === 0)
-    return <p>You have not won any contests yet. Keep trying!</p>;
+  if (loading) return <div className="flex justify-center py-10"><span className='loading loading-infinity loading-lg'></span></div>;
+  if (!wins.length) return <p className="text-center py-10 text-gray-400">No wins yet 🥲<br/>Keep participating to win big! 🏆</p>;
 
   return (
-    <div style={{ maxWidth: 600, margin: 'auto', padding: 20 }}>
-      <h2>My Winning Contests 🏆</h2>
-      <ul style={{ listStyleType: 'none', padding: 0 }}>
-        {winningContests.map(({ id, contestName, prize, dateWon }) => (
-          <li
-            key={id}
-            style={{
-              background: '#f9f9f9',
-              marginBottom: 15,
-              padding: 15,
-              borderRadius: 8,
-              boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <div>
-              <strong style={{ fontSize: 18 }}>{contestName}</strong>
-              <p style={{ margin: 4, color: '#555' }}>
-                Prize: <span style={{ color: '#2e7d32', fontWeight: 'bold' }}>{prize}</span>
-              </p>
-              <small style={{ color: '#999' }}>Won on: {new Date(dateWon).toLocaleDateString()}</small>
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold mb-4">🏆 My Winning Contests ({wins.length})</h3>
+      {wins.map(w => (
+        <div key={w._id} className="p-6 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-2xl shadow-lg border-l-4 border-yellow-500">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0">
+              <div className="w-20 h-20 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center text-2xl font-bold text-white shadow-lg">
+                🏆
+              </div>
             </div>
-            <div style={{ fontSize: 24, color: '#ffb400' }}>🏅</div>
-          </li>
-        ))}
-      </ul>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-bold text-lg text-gray-800 mb-2">{w.contestName}</h4>
+              <p className="text-sm text-gray-600">Prize Money: ৳{w.price}</p>
+              <p className="text-sm text-green-600 font-semibold">
+                Won on: {new Date(w.createdAt).toLocaleDateString()}
+              </p>
+              {w.trackingId && (
+                <p className="text-xs text-gray-500 mt-1">ID: {w.trackingId}</p>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };
 
-export default MyWinningContes;
+export default MyWinningContests;
+

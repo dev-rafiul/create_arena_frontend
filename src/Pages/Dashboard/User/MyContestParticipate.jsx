@@ -1,78 +1,108 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useAuth from "../../../hooks/useAuth";
 
 const MyContestParticipate = () => {
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Fetch user's participated contests from backend
   useEffect(() => {
-    async function fetchParticipatedContests() {
-      try {
-        setLoading(true);
-        // Replace with your actual API URL and include auth if needed
-        const res = await fetch('/api/my-participated-contests');
-        const data = await res.json();
+    if (!user?.email) return;
 
-        // Sort by upcoming deadline (soonest first)
-        const sorted = data.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+    setLoading(true);
+    axiosSecure
+      .get(`/my-participated-contests/${user.email}`)
+      .then(res => {
+        // ✅ Only paid contests
+        const paidContests = res.data.filter(
+          c => c.paymentStatus === "paid"
+        );
 
-        setContests(sorted);
-      } catch (error) {
-        console.error('Failed to fetch participated contests:', error);
-      } finally {
-        setLoading(false);
-      }
-    }
+        // ✅ Sort by upcoming deadline
+        const sortedByDeadline = paidContests.sort(
+          (a, b) =>
+            new Date(a.contestDetails?.deadline) -
+            new Date(b.contestDetails?.deadline)
+        );
 
-    fetchParticipatedContests();
-  }, []);
+        setContests(sortedByDeadline);
+      })
+      .catch(err => console.error("Error fetching contests:", err))
+      .finally(() => setLoading(false));
+  }, [user?.email, axiosSecure]);
 
-  if (loading) return <p>Loading your participated contests...</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center py-10">
+        <span className="loading loading-infinity loading-lg"></span>
+      </div>
+    );
+  }
 
-  if (contests.length === 0) return <p>You have not participated in any contests yet.</p>;
+  if (!contests.length) {
+    return (
+      <p className="text-center py-10 text-gray-500">
+        No paid contests found. Join some contests! 🎯
+      </p>
+    );
+  }
 
   return (
-    <div style={{ maxWidth: 700, margin: 'auto', padding: 20 }}>
-      <h2>My Participated Contests</h2>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {contests.map(({ id, contestName, deadline, paymentStatus }) => (
-          <li
-            key={id}
-            style={{
-              background: '#f0f0f5',
-              marginBottom: 15,
-              padding: 15,
-              borderRadius: 8,
-              boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              gap: '20px',
-            }}
-          >
-            <div>
-              <strong style={{ fontSize: 18 }}>{contestName}</strong>
-              <p style={{ margin: 4, color: '#555' }}>
-                Deadline: {new Date(deadline).toLocaleDateString()}
+    <div className="space-y-4">
+      <h3 className="text-xl font-bold mb-4">
+        📋 My Participated Contests ({contests.length})
+      </h3>
+
+      {contests.map(c => (
+        <div
+          key={c._id}
+          className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl shadow-lg border-l-4 border-blue-500"
+        >
+          <div className="flex items-start gap-4">
+            <img
+              src={c.contestDetails?.image || "/default-contest.png"}
+              alt={c.contestDetails?.name}
+              className="w-20 h-20 rounded-xl object-cover"
+            />
+
+            <div className="flex-1">
+              <h4 className="font-bold text-lg text-gray-800">
+                {c.contestDetails?.name}
+              </h4>
+
+              <p className="text-sm text-gray-600 mt-1">
+                Entry Fee: ৳{c.amount}
               </p>
-            </div>
-            <div>
-              <span
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: 20,
-                  backgroundColor: paymentStatus === 'paid' ? '#4caf50' : '#f44336',
-                  color: 'white',
-                  fontWeight: 'bold',
-                  textTransform: 'capitalize',
-                }}
-              >
-                {paymentStatus}
+
+              <p className="text-sm text-gray-600">
+                📅 Deadline:{" "}
+                {new Date(
+                  c.contestDetails?.deadline
+                ).toLocaleDateString()}
+              </p>
+
+              {/* ✅ Payment Status */}
+              <span className="inline-block mt-2 px-3 py-1 text-xs rounded-full bg-green-100 text-green-700 font-semibold">
+                ✅ Paid
               </span>
+
+              {c.trackingId && (
+                <p className="text-xs text-gray-500 mt-2">
+                  Tracking ID: {c.trackingId}
+                </p>
+              )}
+
+              {c.contestWinnerDeclared && (
+                <span className="inline-block mt-2 ml-2 px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full">
+                  🏆 Winner Declared
+                </span>
+              )}
             </div>
-          </li>
-        ))}
-      </ul>
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

@@ -1,76 +1,108 @@
 import React, { useEffect, useState } from "react";
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useAuth from "../../../hooks/useAuth";
 
 const MyProfile = () => {
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
+
   const [editing, setEditing] = useState(false);
-  const [userData, setUserData] = useState({
-    name: "",
-    email: "",
-    photoURL: "",
-    bio: "",
-    role: "user"
-  });
-  const [stats, setStats] = useState({ participated: 0, won: 0, createdContests: 0 });
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
 
-  const axiosSecure = useAxiosSecure();
-  const { user } = useAuth();
+  const [userData, setUserData] = useState({
+    displayName: "",
+    email: "",
+    photoURL: "",
+    phone: "",
+    bio: "",
+  });
 
+  const [stats, setStats] = useState({
+    participated: 0,
+    won: 0,
+    createdContests: 0,
+  });
+
+  const [contests, setContests] = useState([]);
+  const [wins, setWins] = useState([]);
+
+  /* ================= FETCH ALL DATA ================= */
   useEffect(() => {
     if (!user?.email) return;
-    
-    const fetchData = async () => {
+
+    const fetchAllData = async () => {
       try {
         setLoading(true);
+
+        // Fetch profile
         const profileRes = await axiosSecure.get(`/users/${user.email}`);
-        setUserData(profileRes.data);
-        
+        setUserData({
+          displayName: profileRes.data.displayName || "",
+          email: profileRes.data.email || "",
+          photoURL: profileRes.data.photoURL || "",
+          phone: profileRes.data.phone || "",
+          bio: profileRes.data.bio || "",
+        });
+
+        // Fetch stats
         const statsRes = await axiosSecure.get(`/users/${user.email}/stats`);
-        setStats(statsRes.data);
+        setStats(statsRes.data || stats);
+
+        // Fetch participated contests
+        const contestsRes = await axiosSecure.get(`/my-participated-contests/${user.email}`);
+        setContests(contestsRes.data || []);
+
+        // Fetch winning contests
+        const winsRes = await axiosSecure.get(`/my-winning-contests/${user.email}`);
+        setWins(winsRes.data || []);
+
       } catch (error) {
-        Swal.fire('Error', 'Failed to load profile data', 'error');
+        console.error("Error fetching dashboard data:", error);
+        Swal.fire("Error", "Failed to load dashboard", "error");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchAllData();
   }, [user?.email, axiosSecure]);
 
-  const handleInputChange = (e) => {
+  /* ================= HANDLERS ================= */
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setUserData(prev => ({ ...prev, [name]: value }));
+    setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     const reader = new FileReader();
     reader.onloadend = () => {
-      setUserData(prev => ({ ...prev, photoURL: reader.result }));
+      setUserData((prev) => ({ ...prev, photoURL: reader.result }));
     };
     reader.readAsDataURL(file);
   };
 
+  /* ================= UPDATE PROFILE ================= */
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     setUpdating(true);
-    
+
     try {
-      await axiosSecure.patch(`/users/${userData._id || userData.id}`, {
-        name: userData.name,
+      await axiosSecure.patch(`/users/email/${user.email}`, {
+        displayName: userData.displayName,
         photoURL: userData.photoURL,
-        bio: userData.bio
+        phone: userData.phone,
+        bio: userData.bio,
       });
-      
-      Swal.fire('সফল!', 'Profile আপডেট হয়েছে!', 'success');
+
+      Swal.fire("Success!", "Profile updated successfully", "success");
       setEditing(false);
-    } catch (error) {
-      Swal.fire('ত্রুটি!', 'Profile আপডেট ফেইল', 'error');
+    } catch {
+      Swal.fire("Error!", "Profile update failed", "error");
     } finally {
       setUpdating(false);
     }
@@ -78,206 +110,281 @@ const MyProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <span className='loading loading-infinity loading-lg'></span>
+      <div className="min-h-screen flex justify-center items-center">
+        <span className="loading loading-infinity loading-lg"></span>
       </div>
     );
   }
 
-  const winPercentage = stats.participated > 0 
-    ? ((stats.won / stats.participated) * 100).toFixed(0) 
-    : 0;
+  const winRate =
+    stats.participated > 0
+      ? ((stats.won / stats.participated) * 100).toFixed(0)
+      : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-10 px-4">
+      <div className="max-w-6xl mx-auto">
+        
+        {/* ================= HEADER ================= */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">
-            আমার প্রোফাইল
+          <h1 className="text-5xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
+            My Dashboard
           </h1>
-          <p className="text-xl text-gray-600">আপনার অ্যাকাউন্ট ম্যানেজ করুন এবং পরিসংখ্যান দেখুন</p>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Track your contests, payments, achievements and profile
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Stats Cards */}
-          <div className="space-y-6">
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/50">
-              <h3 className="text-3xl font-bold text-gray-800 mb-8 flex items-center gap-3">
-                📊 আমার পরিসংখ্যান
-              </h3>
-              
-              <div className="space-y-6">
-                {/* Participated */}
-                <div className="p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border-l-4 border-blue-500">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-2xl font-bold text-blue-700">{stats.participated}</span>
-                    <span className="text-sm font-medium text-blue-600">Contest Joined</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div 
-                      className="bg-gradient-to-r from-blue-500 to-indigo-500 h-3 rounded-full transition-all"
-                      style={{ width: '100%' }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Won */}
-                <div className="p-6 bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl border-l-4 border-emerald-500">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-2xl font-bold text-emerald-700">{stats.won}</span>
-                    <span className="text-sm font-medium text-emerald-600">Contest Won</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div 
-                      className="bg-gradient-to-r from-emerald-500 to-green-500 h-3 rounded-full transition-all"
-                      style={{ width: `${winPercentage}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Created Contests */}
-                <div className="p-6 bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl border-l-4 border-purple-500">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-2xl font-bold text-purple-700">{stats.createdContests}</span>
-                    <span className="text-sm font-medium text-purple-600">Contest Created</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-3">
-                    <div 
-                      className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all"
-                      style={{ width: '80%' }}
-                    ></div>
-                  </div>
-                </div>
-
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          
+          {/* ================= STATS CARD ================= */}
+          <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
+            <h3 className="text-3xl font-bold mb-8 flex items-center gap-3 text-gray-800">
+              📊
+              <span className="text-sm font-normal text-gray-600">Statistics</span>
+            </h3>
             
-                <div className="p-6 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border-l-4 border-amber-500 text-center">
-                  <div className="text-4xl font-bold bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent mb-2">
-                    {winPercentage}%
-                  </div>
-                  <div className="text-lg font-bold text-amber-800">Win Rate</div>
-                </div>
-              </div>
+            <div className="space-y-4 mb-8">
+              <StatCard 
+                icon="🎯" 
+                label="Contests Joined" 
+                value={stats.participated}
+                color="blue"
+              />
+              <StatCard 
+                icon="🏆" 
+                label="Contests Won" 
+                value={stats.won}
+                color="yellow"
+              />
+              <StatCard 
+                icon="🎨" 
+                label="Contests Created" 
+                value={stats.createdContests}
+                color="purple"
+              />
+            </div>
+
+            <div className="p-6 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-3xl text-white text-center shadow-2xl">
+              <p className="text-5xl font-black">{winRate}%</p>
+              <p className="text-lg font-semibold opacity-90 mt-1">Win Rate</p>
             </div>
           </div>
 
-        
-          <div>
-            <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/50 mb-8">
-              <div className="flex items-center justify-between mb-8">
-                <h3 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
-                  👤 প্রোফাইল তথ্য
-                </h3>
+          {/* ================= PROFILE CARD ================= */}
+          <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
+            <div className="flex justify-between items-start mb-8">
+              <h3 className="text-3xl font-bold text-gray-800 flex items-center gap-3">
+                👤 Profile
+              </h3>
+              <div className="flex gap-2">
+                <input
+                  type="file"
+                  onChange={handlePhotoChange}
+                  className="file-input file-input-bordered file-input-xs"
+                  accept="image/*"
+                  disabled={!editing}
+                />
                 <button
                   onClick={() => setEditing(!editing)}
-                  className={`btn btn-outline btn-sm ${updating ? 'btn-disabled' : ''}`}
+                  className="btn btn-outline btn-sm"
+                  disabled={updating}
                 >
-                  {editing ? 'বাতিল' : 'এডিট'}
+                  {editing ? "Cancel" : "Edit"}
                 </button>
               </div>
-
-              <form onSubmit={handleUpdateProfile} className="space-y-6">
-            
-                <div className="flex flex-col items-center space-y-4 p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl">
-                  <div className="relative group">
-                    <img
-                      src={userData.photoURL || '/default-avatar.png'}
-                      alt="Profile"
-                      className="w-36 h-36 rounded-3xl object-cover border-4 border-white shadow-2xl ring-4 ring-indigo-200/50"
-                    />
-                    {editing && (
-                      <>
-                        <div className="absolute inset-0 bg-black/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-all"></div>
-                        <label className="absolute -bottom-2 -right-2 w-14 h-14 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-3xl flex items-center justify-center cursor-pointer hover:scale-110 transition-all shadow-2xl border-4 border-white">
-                          📸
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handlePhotoChange}
-                            className="hidden"
-                          />
-                        </label>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                {/* Name */}
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-semibold text-lg">পুরো নাম</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    value={userData.name}
-                    onChange={handleInputChange}
-                    className={`input input-bordered w-full text-lg py-4 ${editing ? 'input-primary' : 'input-disabled bg-gray-50'}`}
-                    disabled={!editing}
-                    required
-                  />
-                </div>
-
-                {/* Email */}
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-semibold text-lg">ইমেইল</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={userData.email}
-                    className="input input-bordered w-full input-disabled bg-gradient-to-r from-gray-50 to-gray-100 text-lg py-4"
-                    readOnly
-                  />
-                </div>
-
-                {/* Bio */}
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-semibold text-lg">বায়ো / ঠিকানা</span>
-                  </label>
-                  <textarea
-                    name="bio"
-                    value={userData.bio || ''}
-                    onChange={handleInputChange}
-                    className={`textarea textarea-bordered w-full h-28 text-lg py-4 ${editing ? 'textarea-primary' : 'textarea-disabled bg-gray-50'}`}
-                    placeholder="আপনার সম্পর্কে বলুন..."
-                    disabled={!editing}
-                  />
-                </div>
-
-                {editing && (
-                  <button
-                    type="submit"
-                    className="w-full btn btn-primary btn-lg text-white font-bold py-4 text-lg shadow-2xl hover:shadow-xl transition-all bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-                    disabled={updating}
-                  >
-                    {updating ? (
-                      <>
-                        <span className="loading loading-spinner mr-2"></span>
-                        আপডেট হচ্ছে...
-                      </>
-                    ) : (
-                      'পরিবর্তন সংরক্ষণ করুন'
-                    )}
-                  </button>
-                )}
-              </form>
             </div>
 
-            {/* Role Badge */}
-            <div className="text-center">
-              <div className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-3xl shadow-2xl font-bold text-xl">
-                <div className="w-4 h-4 rounded-full bg-white"></div>
-                <span>{userData.role || 'User'} Role</span>
-                <div className="w-4 h-4 rounded-full bg-white"></div>
+            <form onSubmit={handleUpdateProfile} className="space-y-6">
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  <img
+                    src={userData.photoURL || "/default-avatar.png"}
+                    className="w-36 h-36 rounded-3xl object-cover ring-8 ring-blue-200/50 shadow-2xl"
+                    alt="profile"
+                  />
+                  {editing && (
+                    <div className="absolute -bottom-2 -right-2 bg-green-500 p-2 rounded-2xl shadow-lg border-4 border-white">
+                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+
+              <Input 
+                label="Full Name" 
+                name="displayName" 
+                value={userData.displayName}
+                onChange={handleChange}
+                disabled={!editing}
+              />
+              
+              <Input 
+                label="Email" 
+                value={userData.email} 
+                disabled 
+              />
+              
+              <Input 
+                label="Phone" 
+                name="phone" 
+                value={userData.phone}
+                onChange={handleChange}
+                disabled={!editing}
+              />
+              
+              <Textarea 
+                label="Bio" 
+                name="bio" 
+                value={userData.bio}
+                onChange={handleChange}
+                disabled={!editing}
+              />
+
+              {editing && (
+                <button className="btn btn-primary w-full btn-lg shadow-xl" disabled={updating}>
+                  {updating ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span>
+                      Updating...
+                    </>
+                  ) : (
+                    "💾 Save Changes"
+                  )}
+                </button>
+              )}
+            </form>
           </div>
+        </div>
+
+        {/* ================= CONTESTS SECTION ================= */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          {/* Participated Contests */}
+          <ContestSection 
+            title="📋 Participated Contests" 
+            count={contests.length}
+            items={contests}
+            emptyText="No contests joined yet. Join some contests! 🎯"
+          />
+
+          {/* Winning Contests */}
+          <ContestSection 
+            title="🏆 Winning Contests" 
+            count={wins.length}
+            items={wins}
+            emptyText="No wins yet 🥲 Keep participating to win big!"
+            isWin={true}
+          />
         </div>
       </div>
     </div>
   );
 };
+
+/* ================= REUSABLE COMPONENTS ================= */
+const StatCard = ({ icon, label, value, color }) => {
+  const colors = {
+    blue: "from-blue-400 to-blue-600",
+    yellow: "from-yellow-400 to-orange-500",
+    purple: "from-purple-500 to-pink-600"
+  };
+
+  return (
+    <div className={`p-6 rounded-2xl shadow-lg border border-opacity-20 bg-gradient-to-r ${colors[color]} bg-opacity-10 backdrop-blur-sm hover:shadow-xl transition-all duration-300`}>
+      <div className="flex items-center gap-4">
+        <div className={`w-12 h-12 rounded-2xl ${colors[color]} bg-opacity-20 flex items-center justify-center shadow-lg`}>
+          <span className="text-2xl">{icon}</span>
+        </div>
+        <div>
+          <p className="text-sm text-gray-600 font-medium">{label}</p>
+          <p className="text-3xl font-black text-gray-900">{value}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ContestSection = ({ title, count, items, emptyText, isWin = false }) => (
+  <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/50">
+    <h3 className="text-2xl font-bold mb-6 flex items-center gap-3 text-gray-800">
+      {isWin ? "🏆" : "📋"} {title} 
+      <span className="text-lg font-normal text-gray-600">({count})</span>
+    </h3>
+    
+    {items.length === 0 ? (
+      <div className="text-center py-12">
+        <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-3xl flex items-center justify-center">
+          {isWin ? "🥲" : "🎯"}
+        </div>
+        <p className="text-gray-500 text-lg">{emptyText}</p>
+      </div>
+    ) : (
+      <div className="space-y-4 max-h-96 overflow-y-auto">
+        {items.map((item) => (
+          <ContestCard key={item._id} contest={item} isWin={isWin} />
+        ))}
+      </div>
+    )}
+  </div>
+);
+
+const ContestCard = ({ contest, isWin }) => (
+  <div className={`p-6 rounded-2xl shadow-lg border-l-4 transition-all hover:shadow-xl ${
+    isWin 
+      ? 'bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-500' 
+      : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-500'
+  }`}>
+    <div className="flex items-start gap-4">
+      <img 
+        src={contest.contestDetails?.image || contest.contestImage || '/default-contest.png'} 
+        alt={contest.contestName}
+        className="w-20 h-20 rounded-2xl object-cover flex-shrink-0 shadow-md"
+      />
+      <div className="flex-1 min-w-0">
+        <h4 className="font-bold text-xl text-gray-800 mb-2 line-clamp-2">
+          {contest.contestDetails?.name || contest.contestName}
+        </h4>
+        <div className="space-y-1 text-sm">
+          <p className="text-gray-600">
+            💰 Entry: ${contest.price || contest.amount}
+          </p>
+          <p className="text-green-600 font-semibold">
+            ✅ {new Date(contest.createdAt).toLocaleDateString()}
+          </p>
+          {contest.trackingId && (
+            <p className="text-xs text-gray-500">
+              🆔 {contest.trackingId}
+            </p>
+          )}
+          {contest.contestWinnerDeclared && (
+            <span className="inline-block px-3 py-1 text-xs bg-yellow-100 text-yellow-800 rounded-full font-semibold">
+              👑 Winner Declared
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const Input = ({ label, ...props }) => (
+  <div className="form-control w-full">
+    <label className="label">
+      <span className="label-text font-semibold">{label}</span>
+    </label>
+    <input className="input input-bordered input-lg w-full" {...props} />
+  </div>
+);
+
+const Textarea = ({ label, ...props }) => (
+  <div className="form-control w-full">
+    <label className="label">
+      <span className="label-text font-semibold">{label}</span>
+    </label>
+    <textarea className="textarea textarea-bordered textarea-lg w-full" rows={3} {...props} />
+  </div>
+);
 
 export default MyProfile;

@@ -7,15 +7,15 @@ const ContestDetails = () => {
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
 
-  const { data: contest = {}, isLoading: contestLoading } = useQuery({
+  const { data: contest = null, isLoading: contestLoading, isError: contestError } = useQuery({
     queryKey: ["contestDetails", contestId],
     queryFn: async () => {
       const res = await axiosSecure.get(`/contests/${contestId}`);
       return res.data;
-    }
+    },
+    enabled: !!contestId
   });
 
-  
   const { data: participants = [], isLoading: participantsLoading } = useQuery({
     queryKey: ["contestParticipants", contestId],
     queryFn: async () => {
@@ -25,6 +25,9 @@ const ContestDetails = () => {
     enabled: !!contestId
   });
 
+  
+  const isUserJoined = participants.some(p => p.email === localStorage.getItem('email'));
+
   if (contestLoading || participantsLoading) {
     return (
       <div className="flex justify-center mt-20">
@@ -33,50 +36,44 @@ const ContestDetails = () => {
     );
   }
 
-  if (!contest) return <p className="text-center mt-20 text-red-500">Contest not found</p>;
+  if (contestError || !contest) {
+    return <p className="text-center mt-20 text-red-500">Contest not found</p>;
+  }
+
+  const handleJoinContest = () => {
+    navigate(`/payment/${contest._id}`);
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-6">
-      <title>Contest Details | Create Arena</title>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         <div>
           <img
             src={contest.image}
             alt={contest.name}
-            className="w-[250px] h-[220px] mx-auto rounded-lg border"
+            className="w-[250px] h-[220px] mx-auto rounded-lg border object-cover"
           />
         </div>
 
         <div>
-          <span className="text-sm text-green-600 font-semibold uppercase">
-            New Contest
-          </span>
-
-          <h2 className="text-3xl font-bold mt-2">
-            {contest.name}
-          </h2>
+          <span className="text-sm text-green-600 font-semibold uppercase">New Contest</span>
+          <h2 className="text-3xl font-bold mt-2">{contest.name}</h2>
 
           <div className="flex items-center gap-2 mt-2">
             <span className="text-yellow-500">★★★★★</span>
             <span className="text-sm text-gray-500">(4.5)</span>
           </div>
 
-          <p className="text-3xl font-semibold text-green-600 mt-4">
-            ${contest.price}
-          </p>
-
-          <p className="text-gray-600 mt-4">
-            {contest.description}
-          </p>
+          <p className="text-3xl font-semibold text-green-600 mt-4">${contest.price}</p>
+          <p className="text-gray-600 mt-4">{contest.description}</p>
 
           <div className="grid grid-cols-2 gap-4 mt-6 text-sm">
-            <p className="font-semibold"><strong>Type:</strong> {contest.type}</p>
-            <p className="font-semibold"><strong>Prize:</strong> ${contest.prizeMoney}</p>
-            <p className="font-semibold"><strong>Deadline:</strong> {contest.deadline}</p>
-            <p className="font-semibold"><strong>Status:</strong> Open</p>
+            <p><strong>Type:</strong> {contest.type}</p>
+            <p><strong>Prize:</strong> ${contest.prizeMoney}</p>
+            <p><strong>Deadline:</strong> {contest.deadline}</p>
+            <p><strong>Status:</strong> Open</p>
           </div>
 
-        
           <div className="mt-8">
             <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
               <span className="text-2xl">👥</span>
@@ -101,14 +98,11 @@ const ContestDetails = () => {
           </div>
 
           <button
-            onClick={() => navigate(`/payment/${contest._id}`)}
-            className="mt-6 w-full py-3 bg-amber-800 text-white rounded-lg font-semibold hover:bg-amber-900 transition"
-            disabled={participants.some(p => p.email === localStorage.getItem('email'))}
+            onClick={handleJoinContest}
+            className="mt-6 w-full py-3 bg-amber-800 text-white rounded-lg font-semibold hover:bg-amber-900 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
+            disabled={isUserJoined}
           >
-            {participants.some(p => p.email === localStorage.getItem('email')) 
-              ? 'Already Joined ✅' 
-              : 'Added to Cart'
-            }
+            {isUserJoined ? 'Already Joined ✅' : 'Join Contest'}
           </button>
         </div>
       </div>
