@@ -1,155 +1,114 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
 
 const ContestSection = () => {
-  const [contests, setContests] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const axiosSecure = useAxiosSecure();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
-  // Dummy auth check (replace with your auth logic)
-  const isLoggedIn = Boolean(localStorage.getItem("authToken")); // Or from context/provider
+  // 🔹 Fetch approved contests
+  const { data: contests = [], isLoading } = useQuery({
+    queryKey: ["popularContests"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/contests/approved");
+      return res.data;
+    },
+  });
 
-  useEffect(() => {
-    async function fetchPopularContests() {
-      try {
-        setLoading(true);
-        // Replace with your API endpoint that returns contests with participation counts
-        const res = await fetch("/api/popular-contests"); 
-        const data = await res.json();
+  // 🔹 Sort by highest participants count & take top 5
+  const popularContests = [...contests]
+    .sort(
+      (a, b) => (b.participantsCount || 0) - (a.participantsCount || 0)
+    )
+    .slice(0, 5);
 
-        // Sort by participationCount descending and limit to 5
-        const sorted = data
-          .sort((a, b) => b.participantsCount - a.participantsCount)
-          .slice(0, 5);
-
-        setContests(sorted);
-      } catch (error) {
-        console.error("Failed to fetch popular contests:", error);
-      } finally {
-        setLoading(false);
-      }
+  // 🔹 Handle Details click
+  const handleDetails = (id) => {
+    if (!user) {
+      navigate("/login");
+    } else {
+      navigate(`/contests/${id}`);
     }
+  };
 
-    fetchPopularContests();
-  }, []);
-
-  if (loading) return <p>Loading popular contests...</p>;
-
-  if (contests.length === 0) return <p>No popular contests available.</p>;
+  if (isLoading) {
+    return (
+      <div className="py-20 text-center">
+        <span className="loading loading-infinity loading-lg"></span>
+      </div>
+    );
+  }
 
   return (
-    <section style={{ padding: "20px", maxWidth: 960, margin: "auto" }}>
-      <h2 style={{ textAlign: "center", marginBottom: 24 }}>Popular Contests</h2>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))",
-          gap: 20,
-        }}
-      >
-        {contests.map(
-          ({
-            id,
-            contestName,
-            participantsCount,
-            description,
-            imageURL,
-          }) => (
+    <section className="py-20 bg-gradient-to-br from-indigo-50 to-purple-50">
+      <div className="max-w-7xl mx-auto px-6">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-black text-indigo-700 mb-3">
+            🔥 Popular Contests
+          </h2>
+          <p className="text-gray-600">
+            Most participated contests you don’t want to miss
+          </p>
+        </div>
+
+        {/* Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {popularContests.map((contest) => (
             <div
-              key={id}
-              style={{
-                boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
-                borderRadius: 12,
-                overflow: "hidden",
-                background: "#fff",
-                display: "flex",
-                flexDirection: "column",
-              }}
+              key={contest._id}
+              className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col"
             >
-              <div
-                style={{
-                  height: 160,
-                  background: `url(${imageURL || "https://via.placeholder.com/400x160?text=No+Image"}) center/cover no-repeat`,
-                }}
-                aria-label={`Image for ${contestName}`}
-              />
-              <div style={{ padding: 16, flexGrow: 1 }}>
-                <h3
-                  style={{
-                    margin: "0 0 10px",
-                    fontSize: "1.25rem",
-                    fontWeight: "600",
-                    color: "#222",
-                  }}
-                >
-                  {contestName}
+              {/* Image */}
+              <div className="relative">
+                <img
+                  src={contest.image}
+                  alt={contest.name}
+                  className="h-48 w-full object-cover"
+                />
+                <div className="absolute top-3 right-3 bg-black/70 text-white text-xs font-bold px-3 py-1 rounded-full">
+                  👥 {contest.participantsCount || 0} joined
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="p-6 flex flex-col flex-1">
+                <h3 className="text-xl font-bold mb-3 text-gray-800">
+                  {contest.name}
                 </h3>
-                <p
-                  style={{
-                    fontSize: "0.9rem",
-                    color: "#555",
-                    marginBottom: 12,
-                    minHeight: 48,
-                  }}
-                  title={description}
-                >
-                  {description.length > 80
-                    ? description.slice(0, 80) + "…"
-                    : description}
+
+                <p className="text-gray-600 text-sm mb-4">
+                  {contest.description
+                    ? contest.description.slice(0, 90) + "..."
+                    : "No description available."}
                 </p>
-                <p
-                  style={{
-                    fontWeight: "bold",
-                    color: "#0070f3",
-                    marginBottom: 12,
-                  }}
-                >
-                  Participants: {participantsCount}
-                </p>
-                <button
-                  onClick={() => {
-                    if (isLoggedIn) {
-                      navigate(`/contests/${id}`);
-                    } else {
-                      navigate("/login");
-                    }
-                  }}
-                  style={{
-                    backgroundColor: "#0070f3",
-                    color: "white",
-                    border: "none",
-                    padding: "10px 16px",
-                    borderRadius: 6,
-                    cursor: "pointer",
-                    width: "100%",
-                    fontWeight: "600",
-                  }}
-                  aria-label={`View details for ${contestName}`}
-                >
-                  Details
-                </button>
+
+                {/* Action */}
+                <div className="mt-auto">
+                  <button
+                    onClick={() => handleDetails(contest._id)}
+                    className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 rounded-xl font-bold hover:from-indigo-600 hover:to-purple-700 transition-all duration-300"
+                  >
+                    View Details →
+                  </button>
+                </div>
               </div>
             </div>
-          )
-        )}
-      </div>
+          ))}
+        </div>
 
-      <div style={{ textAlign: "center", marginTop: 30 }}>
-        <button
-          onClick={() => navigate("/all_contests")}
-          style={{
-            backgroundColor: "#555",
-            color: "white",
-            border: "none",
-            padding: "10px 20px",
-            borderRadius: 6,
-            cursor: "pointer",
-            fontWeight: "600",
-          }}
-          aria-label="Show all contests"
-        >
-          Show All
-        </button>
+        {/* Show All */}
+        <div className="text-center mt-12">
+          <button
+            onClick={() => navigate("/contests")}
+            className="px-8 py-4 bg-white border-2 border-indigo-600 text-indigo-600 font-bold rounded-2xl hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-lg"
+          >
+            Show All Contests →
+          </button>
+        </div>
       </div>
     </section>
   );

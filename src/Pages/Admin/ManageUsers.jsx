@@ -220,25 +220,14 @@ const ManageUsers = () => {
       setSelectedUser(user);
       document.getElementById('user_modal').showModal();
     }}
-    className="btn btn-xs btn-info text-white"
+    className="btn btn-secondary text-white"
   >
     👁️
   </button>
 
-  {/* DELETE BUTTON */}
-  <button
-    onClick={() => handleDeleteUser(user)}
-    className="btn btn-xs btn-outline btn-error"
-  >
-    <RiDeleteBin6Line />
-  </button>
+  
 </td>
 
-                    {/* <td className="text-center">
-                      <button className="btn btn-xs btn-outline btn-error">
-                        <RiDeleteBin6Line />
-                      </button> */}
-                    {/* </td> */}
                   </tr>
                 );
               })}
