@@ -1,110 +1,3 @@
-// import React, { useEffect } from "react";
-// import { useForm } from "react-hook-form";
-// import useAxiosSecure from "../../hooks/useAxiosSecure";
-// import Swal from "sweetalert2";
-
-// const CreatorAccess = () => {
-//   const {
-//     register,
-//     handleSubmit,
-//     formState: { errors },
-//     reset,
-//   } = useForm();
-
-//   const axiosSecure = useAxiosSecure();
-
-//   useEffect(() => {
-//     document.title = "Creator Access | Create Arena";
-//   }, []);
-
-//   const handleCreatorAccess = async (data) => {
-//     const creatorRequest = {
-//       ...data,
-//       status: "pending",
-//       createdAt: new Date(),
-//     };
-
-//     const res = await axiosSecure.post("/creator", creatorRequest);
-
-//     if (res.data.insertedId) {
-//       Swal.fire({
-//         position: "top-end",
-//         icon: "success",
-//         title:
-//           "Your Creator Role Application has been Submitted!",
-//         text: "We will reach out within 7 working days",
-//         showConfirmButton: false,
-//         timer: 2500,
-//       });
-//       reset();
-//     }
-//   };
-
-//   return (
-//     <div className="w-full flex justify-center py-10 px-4">
-//       <form
-//         onSubmit={handleSubmit(handleCreatorAccess)}
-//         className="w-full max-w-md space-y-5 bg-white shadow-xl p-6 rounded-xl"
-//       >
-//         <h4 className="text-3xl text-center font-bold">
-//           Apply for Creator Role
-//         </h4>
-
-//         {[
-//           { label: "CREATOR NAME", name: "name", type: "text" },
-//           { label: "CREATOR EMAIL", name: "email", type: "email" },
-//           { label: "PHONE NUMBER", name: "phone", type: "number" },
-//           { label: "CREATOR AGE", name: "age", type: "number" },
-//           { label: "YOUR CITY", name: "city", type: "text" },
-//         ].map((field) => (
-//           <div key={field.name}>
-//             <label className="text-xs font-semibold">
-//               {field.label}
-//             </label>
-//             <input
-//               type={field.type}
-//               {...register(field.name, { required: true })}
-//               className="w-full border-b border-gray-300 focus:outline-none py-1"
-//             />
-//             {errors[field.name] && (
-//               <p className="text-xs text-red-500 mt-1">
-//                 {field.label} is required
-//               </p>
-//             )}
-//           </div>
-//         ))}
-
-//         <div>
-//           <label className="text-xs font-semibold">
-//             Short Bio / Interests
-//           </label>
-//           <textarea
-//             rows="3"
-//             {...register("description", { required: true })}
-//             className="w-full border-b border-gray-300 focus:outline-none py-1"
-//           />
-//           {errors.description && (
-//             <p className="text-xs text-red-500 mt-1">
-//               Description is required
-//             </p>
-//           )}
-//         </div>
-
-//         <button
-//           type="submit"
-//           className="w-full py-2 bg-emerald-600 text-white font-semibold rounded-full hover:bg-emerald-700 transition"
-//         >
-//           Submit Request
-//         </button>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default CreatorAccess;
-
-
-
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
@@ -128,13 +21,13 @@ const CreatorAccess = () => {
     checkApplicationStatus();
   }, []);
 
-  // Check if user already applied
+
   const checkApplicationStatus = async () => {
     try {
-      const res = await axiosSecure.get('/creator');
+      const res = await axiosSecure.get('/user');
       const creators = res.data;
       
-      // Get current user email from localStorage or context (adjust as per your auth)
+      
       const userEmail = localStorage.getItem('userEmail') || 
                        JSON.parse(localStorage.getItem('user') || '{}')?.email;
       

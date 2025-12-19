@@ -6,6 +6,8 @@ import { IoShieldCheckmark } from "react-icons/io5";
 import { FiShieldOff } from "react-icons/fi";
 import { FaUserCheck } from "react-icons/fa";
 import Swal from 'sweetalert2';
+import 'sweetalert2/dist/sweetalert2.min.css';
+
 
 const ITEMS_PER_PAGE = 10;
 
@@ -34,62 +36,56 @@ const ManageUsers = () => {
   const hasCreatorApplication = (email) =>
     creators.some(c => c.email === email);
 
-  // ===== SORT (Newest First)
+ 
   const sortedUsers = useMemo(() => {
     return [...users].sort(
       (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
     );
   }, [users]);
-
-  // ===== PAGINATION
+  
   const totalPages = Math.ceil(sortedUsers.length / ITEMS_PER_PAGE);
   const startIndex = (page - 1) * ITEMS_PER_PAGE;
   const currentUsers = sortedUsers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // ===== ROLE UPDATE
+ 
+
+
+
+
+
+
   const updateRole = (user, role, msg) => {
-    axiosSecure.patch(`/users/${user._id}/role`, { role })
-      .then(res => {
-        if (res.data.modifiedCount) {
-          refetch();
-          Swal.fire({
-            position: 'top-end',
-            icon: 'success',
-            title: msg,
-            showConfirmButton: false,
-            timer: 2000
-          });
-        }
+  axiosSecure
+    .patch(`/users/${user._id}/role`, { role })
+    .then(res => {
+      console.log(res.data); 
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: msg,
+        showConfirmButton: false,
+        timer: 2000,
       });
-  };
-
-
-  const handleDeleteUser = (user) => {
-  Swal.fire({
-    title: 'Are you sure?',
-    text: 'This user will be permanently deleted',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    confirmButtonText: 'Yes, delete'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      axiosSecure.delete(`/users/${user._id}`)
-        .then(res => {
-          if (res.data.deletedCount) {
-            refetch();
-            Swal.fire('Deleted!', 'User has been deleted.', 'success');
-          }
-        });
-    }
-  });
+      refetch();
+    })
+    .catch(err => {
+      console.error(err);
+      Swal.fire({
+        icon: "error",
+        title: "Failed!",
+        text: "Role update unsuccessful",
+      });
+    });
 };
+
+
+
 
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
 
-      {/* ====== STATS CARDS ====== */}
+      
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div className="bg-white rounded-2xl p-5 shadow">
           <p className="text-sm text-gray-500">Total Users</p>
@@ -118,7 +114,7 @@ const ManageUsers = () => {
         </div>
       </div>
 
-      {/* ====== USERS TABLE ====== */}
+    
       <div className="bg-white rounded-2xl shadow overflow-hidden">
         <div className="p-6 border-b">
           <h2 className="text-xl font-semibold">User Management</h2>
@@ -292,7 +288,7 @@ const ManageUsers = () => {
 
 
 
-        {/* ====== PAGINATION ====== */}
+        
         <div className="flex justify-between items-center p-6 bg-gray-50">
           <p className="text-sm text-gray-500">
             Page {page} of {totalPages}
@@ -306,6 +302,11 @@ const ManageUsers = () => {
             >
               Prev
             </button>
+
+
+
+
+
 
             <button
               disabled={page === totalPages}

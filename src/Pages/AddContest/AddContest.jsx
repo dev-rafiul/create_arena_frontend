@@ -133,7 +133,6 @@ const AddContest = () => {
               </div>
             </div>
 
-            {/* Image Upload */}
             <div>
               <label className="block text-sm font-bold text-gray-700 mb-2">
                 🖼️ Contest Banner Image

@@ -1,9 +1,9 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
-import useAuth from "../../hooks/useAuth";
 import { useNavigate, useParams } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const ContestDetails = () => {
   const { contestId } = useParams();
@@ -13,17 +13,18 @@ const ContestDetails = () => {
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [submitLink, setSubmitLink] = useState("");
 
-  // Fetch contest details
+  
   const { data: contest, isLoading: contestLoading } = useQuery({
     queryKey: ["contest", contestId],
     queryFn: async () => {
+      
       const res = await axiosSecure.get(`/contests/${contestId}`);
       return res.data;
     },
     enabled: !!contestId,
   });
 
-  // Fetch participants count
+
   const { data: participants = [] } = useQuery({
     queryKey: ["participants", contestId],
     queryFn: async () => {
@@ -33,7 +34,7 @@ const ContestDetails = () => {
     enabled: !!contestId,
   });
 
-  // Fetch user's participation status
+ 
   const { data: userPayments = [] } = useQuery({
     queryKey: ["userPayments", user?.email, contestId],
     queryFn: async () => {
@@ -44,16 +45,15 @@ const ContestDetails = () => {
     enabled: !!user?.email && !!contestId,
   });
 
-  // Check if user has paid
+
   const hasPaid = userPayments.some(p => p.paymentStatus === "paid");
-  
-  // Check if contest ended
+
   const isEnded = contest && new Date(contest.deadline) < new Date();
   
-  // Find winner
+  
   const winnerPayment = participants.find(p => p.isWinner);
   
-  // Submit task handler
+ 
   const handleSubmitTask = async () => {
     if (!submitLink.trim()) return;
     
@@ -78,13 +78,13 @@ const ContestDetails = () => {
   }
 
   if (!contest) {
-    return <div className="text-center py-20">Contest not found</div>;
+    return <div className="text-center text-4xl py-20">Thanks For Joining Us</div>;
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        {/* Back Button */}
+    
         <button
           onClick={() => navigate(-1)}
           className="mb-8 inline-flex items-center gap-2 text-indigo-600 hover:text-indigo-800 font-semibold"
@@ -92,13 +92,13 @@ const ContestDetails = () => {
           ← Back to Contests
         </button>
 
-        {/* Contest Header */}
+    
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-black bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-6">
             {contest.name}
           </h1>
           
-          {/* Participants Count */}
+          
           <div className="inline-flex items-center gap-2 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-2xl shadow-xl border border-indigo-200">
             <span className="text-2xl">👥</span>
             <span className="text-xl font-bold text-gray-800">
@@ -107,7 +107,7 @@ const ContestDetails = () => {
           </div>
         </div>
 
-        {/* Big Banner Image */}
+       
         <div className="mb-12 rounded-3xl overflow-hidden shadow-2xl">
           <img
             src={contest.image}
@@ -117,9 +117,9 @@ const ContestDetails = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 items-start">
-          {/* Left: Description & Details */}
+         
           <div className="space-y-8">
-            {/* Contest Description */}
+            
             <div className="bg-white rounded-3xl p-8 shadow-xl">
               <h2 className="text-2xl font-bold mb-6 text-gray-800">📝 Contest Details</h2>
               <div className="prose prose-lg max-w-none">
@@ -129,7 +129,7 @@ const ContestDetails = () => {
               </div>
             </div>
 
-            {/* Task Details */}
+          
             <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-3xl p-8 shadow-xl border border-emerald-200">
               <h3 className="text-2xl font-bold mb-6 text-emerald-800 flex items-center gap-3">
                 🎯 Task Requirements
@@ -139,7 +139,7 @@ const ContestDetails = () => {
               </div>
             </div>
 
-            {/* Prize & Deadline */}
+            
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-8 rounded-3xl shadow-xl text-center">
                 <div className="text-3xl mb-2">🏆</div>
@@ -161,9 +161,9 @@ const ContestDetails = () => {
             </div>
           </div>
 
-          {/* Right: Actions & Winner */}
+        
           <div className="space-y-6">
-            {/* Winner Section */}
+          
             {winnerPayment ? (
               <div className="bg-gradient-to-r from-emerald-50 to-green-100 p-8 rounded-3xl shadow-xl border-4 border-emerald-300 text-center">
                 <div className="text-5xl mb-4">🥇</div>
@@ -177,11 +177,11 @@ const ContestDetails = () => {
               </div>
             ) : null}
 
-            {/* Action Buttons */}
+            
             <div className="bg-white rounded-3xl p-8 shadow-xl border-2 border-gray-100">
               <h3 className="text-2xl font-bold mb-8 text-gray-800 text-center">Quick Actions</h3>
               
-              {/* Pay/Register Button */}
+              
               <button
                 onClick={() => navigate(`/payment/${contestId}`)}
                 disabled={hasPaid || isEnded}
@@ -196,11 +196,10 @@ const ContestDetails = () => {
                 ) : isEnded ? (
                   "⏰ Contest Ended"
                 ) : (
-                  `💳 Pay $${contest.price} & Join`
+                  ` Pay $${contest.price} & Join`
                 )}
               </button>
-
-              {/* Submit Task Button */}
+          
               {hasPaid && !isEnded && (
                 <button
                   onClick={() => setShowSubmitModal(true)}
@@ -214,7 +213,7 @@ const ContestDetails = () => {
         </div>
       </div>
 
-      {/* Submit Task Modal */}
+    
       {showSubmitModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-3xl p-8 max-w-md w-full max-h-[90vh] overflow-y-auto shadow-2xl">
