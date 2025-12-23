@@ -10,7 +10,7 @@ const useRole = () => {
   useEffect(() => {
     if (user?.email) {
       axios
-        .get(`http://localhost:3000/users/${user.email}/role`)
+        .get(`https://create-arena-backend.vercel.app/users/${user.email}/role`)
         .then((res) => setRole(res.data.role))
         .catch(() => setRole("user"))
         .finally(() => setRoleLoading(false));

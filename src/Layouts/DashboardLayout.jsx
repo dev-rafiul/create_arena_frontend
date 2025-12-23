@@ -101,10 +101,22 @@ const DashboardLayout = () => {
                 <>
                   <li>
                     <NavLink
-                      to="/dashboard/my_created_contest"
+                      to="/dashboard/adds_contest"
                       className={({ isActive }) =>
                         isActive ? 'active' : ''
                       }
+                      title="Add Contest"
+                    >
+                      <FaUsers className="inline mr-2" />
+                      Add Contest
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/dashboard/my_created_contest"
+                      className={({ isActive }) =>
+                        isActive ? 'active' : ''
+                    }
                       title="My Created Contest"
                     >
                       <FaUsers className="inline mr-2" />
@@ -128,6 +140,18 @@ const DashboardLayout = () => {
 
               {role === 'user' && (
                 <>
+                  <li>
+                    <NavLink
+                      to="/dashboard/creator_access"
+                      className={({ isActive }) =>
+                        isActive ? 'active' : ''
+                      }
+                      title="Creator Access"
+                    >
+                      <FaMedal className="inline mr-2" />
+                      Creator Access
+                    </NavLink>
+                  </li>
                   <li>
                     <NavLink
                       to="/dashboard/my_participate_contest"

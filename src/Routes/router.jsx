@@ -110,6 +110,22 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <DashboardHome /> },
       {
+        path: "adds_contest",
+        element: (
+          <PrivateRoute>
+            <AddContest />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "creator_access",
+        element: (
+          <PrivateRoute>
+            <CreatorAccess />
+          </PrivateRoute>
+        ),
+      },
+      {
         path: "manage_users",
         element: (
           <AdminRoute>

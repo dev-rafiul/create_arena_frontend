@@ -4,7 +4,7 @@ import { useNavigate } from "react-router";
 import useAuth from "./useAuth";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://create-arena-backend.vercel.app",
 });
 
 const useAxiosSecure = () => {
@@ -16,7 +16,7 @@ const useAxiosSecure = () => {
     const reqInterceptor = axiosSecure.interceptors.request.use(
       async (config) => {
         if (user) {
-          const token = await user.getIdToken(); // ✅ ALWAYS VALID TOKEN
+          const token = await user.getIdToken(); 
           config.headers.Authorization = `Bearer ${token}`;
         }
         return config;

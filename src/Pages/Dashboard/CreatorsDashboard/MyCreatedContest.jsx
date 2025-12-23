@@ -17,6 +17,9 @@ const MyCreatedContest = () => {
   const [selectedSubmission, setSelectedSubmission] = useState(null);
 
 
+
+
+
   const { data: contests = [], isLoading } = useQuery({
     queryKey: ["myCreatedContests", user?.email],
     enabled: !!user?.email,
@@ -27,23 +30,52 @@ const MyCreatedContest = () => {
   });
 
 
+  // const { data: contestParticipants = [] } = useQuery({
+  //   queryKey: ["contestParticipants", selectedContest?._id],
+  //   enabled: !!selectedContest?._id && isSubmissionsOpen,
+  //   queryFn: async () => {
+  //     const res = await axiosSecure.get(`/contests/${selectedContest._id}/participants`);
+  //     return res.data;
+  //   }
+  // });
   const { data: contestParticipants = [] } = useQuery({
-    queryKey: ["contestParticipants", selectedContest?._id],
-    enabled: !!selectedContest?._id && isSubmissionsOpen,
-    queryFn: async () => {
-      const res = await axiosSecure.get(`/contests/${selectedContest._id}/participants`);
-      return res.data;
-    }
-  });
+  queryKey: ["contestParticipants", selectedContest?._id],
+  enabled: !!selectedContest?._id && isSubmissionsOpen,
+  queryFn: async () => {
+    const res = await axiosSecure.get(`/contests/${selectedContest._id}/participants`);
+    return res.data;
+  }
+});
 
-  const { data: contestSubmissions = [] } = useQuery({
-    queryKey: ["contestSubmissions", selectedContest?._id],
-    enabled: !!selectedContest?._id && isSubmissionsOpen,
-    queryFn: async () => {
-      const res = await axiosSecure.get(`/creator-submissions?email=${user.email}&contestId=${selectedContest._id}`);
-      return res.data;
-    }
-  });
+
+  // const { data: contestSubmissions = [] } = useQuery({
+  //   queryKey: ["contestSubmissions", selectedContest?._id],
+  //   enabled: !!selectedContest?._id && isSubmissionsOpen,
+  //   queryFn: async () => {
+  //     const res = await axiosSecure.get(`/creator-submissions?email=${user.email}&contestId=${selectedContest._id}`);
+  //     return res.data;
+  //   }
+  // });
+
+const { data: contestSubmissions = [] } = useQuery({
+  queryKey: ["contestSubmissions", selectedContest?._id],
+  enabled: !!selectedContest?._id && isSubmissionsOpen,
+  queryFn: async () => {
+    const res = await axiosSecure.get(
+      `/creator-submissions?email=${user.email}&contestId=${selectedContest._id}`
+    );
+    return res.data;
+  }
+});
+
+
+
+
+
+
+
+
+
 
   const deleteMutation = useMutation({
     mutationFn: async (id) => axiosSecure.delete(`/contests/${id}`),
@@ -399,27 +431,7 @@ const MyCreatedContest = () => {
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-3 pt-4 border-t">
-                {contestSubmissions.length > 0 && !contestSubmissions.some(s => s.isWinner) && (
-                  <button 
-                    className="btn btn-success gap-2"
-                    onClick={() => handleDeclareWinner(contestSubmissions[0])} 
-                    disabled={declareWinnerMutation.isLoading}
-                  >
-                    {declareWinnerMutation.isLoading ? (
-                      <>
-                        <span className="loading loading-spinner"></span>
-                        Declaring...
-                      </>
-                    ) : (
-                      <>
-                        <FaTrophy />
-                        Declare Winner
-                      </>
-                    )}
-                  </button>
-                )}
-              </div>
+              
             </div>
           </dialog>
         )}

@@ -46,13 +46,6 @@ const menu = (
   }
 
 
-{role === "creator" && (
-  <Link to="/add_contest">
-    <li className="nav-glow">Add Contest</li>
-  </Link>
-)}
-
-
 
 
 
