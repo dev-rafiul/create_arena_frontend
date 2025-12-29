@@ -47,7 +47,7 @@ const WinnerAdvertisement = () => {
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
             <h3 className="text-4xl font-black text-orange-500">$50K+</h3>
             <p className="text-gray-600 font-semibold mt-2">
-              Prize Money Distributed
+              
             </p>
           </div>
 
