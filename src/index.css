@@ -1,37 +1,91 @@
 @import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
+/* Design System Foundation - Contest Platform Enhancement */
 @plugin "daisyui" {
-  themes: light --default;
+  themes: contest-light --default, contest-dark --prefersdark;
 }
-@plugin "daisyui/theme"{
-  name: "light";
-  default: true;
-  --color-primary: #caeb66;
-  --color-secondary: #03373d;
-};
 
-body{
+/* Contest Platform Light Theme */
+@plugin "daisyui/theme" {
+  name: "contest-light";
+  default: true;
+  
+  /* Primary Colors (Maximum 3 + Neutral as per Requirements 1.1) */
+  --color-primary: #3b82f6;        /* Blue - Primary actions, CTAs */
+  --color-secondary: #10b981;      /* Green - Success, positive actions */
+  --color-accent: #f59e0b;         /* Amber - Highlights, warnings, contests */
+  --color-neutral: #6b7280;        /* Gray - Neutral elements, borders */
+  
+  /* Base Colors for Layout */
+  --color-base-100: #ffffff;       /* Main background */
+  --color-base-200: #f9fafb;       /* Card backgrounds, secondary areas */
+  --color-base-300: #e5e7eb;       /* Borders, dividers, disabled states */
+  --color-base-content: #111827;   /* Primary text color */
+  
+  /* Semantic Colors */
+  --color-info: #3b82f6;           /* Information messages */
+  --color-success: #10b981;        /* Success states */
+  --color-warning: #f59e0b;        /* Warning states */
+  --color-error: #ef4444;          /* Error states */
+  
+  /* Design System Tokens - Consistent Spacing & Styling */
+  --rounded-box: 0.5rem;           /* 8px - Card border radius */
+  --rounded-btn: 0.375rem;         /* 6px - Button border radius */
+  --rounded-badge: 1rem;           /* 16px - Badge border radius */
+  
+  /* Animation Timing */
+  --animation-btn: 0.25s;          /* Button hover transitions */
+  --animation-input: 0.2s;         /* Input focus transitions */
+}
+
+/* Contest Platform Dark Theme */
+@plugin "daisyui/theme" {
+  name: "contest-dark";
+  
+  /* Primary Colors (Adjusted for dark mode contrast - Requirements 1.2) */
+  --color-primary: #60a5fa;        /* Lighter blue for better contrast */
+  --color-secondary: #34d399;      /* Lighter green for better contrast */
+  --color-accent: #fbbf24;         /* Lighter amber for better contrast */
+  --color-neutral: #9ca3af;        /* Lighter gray for better contrast */
+  
+  /* Base Colors - Dark Mode */
+  --color-base-100: #1f2937;       /* Dark main background */
+  --color-base-200: #111827;       /* Darker card backgrounds */
+  --color-base-300: #374151;       /* Dark borders, dividers */
+  --color-base-content: #f9fafb;   /* Light text on dark background */
+  
+  /* Semantic Colors - Dark Mode Optimized */
+  --color-info: #60a5fa;
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-error: #f87171;
+  
+  /* Same Design System Tokens */
+  --rounded-box: 0.5rem;
+  --rounded-btn: 0.375rem;
+  --rounded-badge: 1rem;
+  --animation-btn: 0.25s;
+  --animation-input: 0.2s;
+}
+
+/* Global Typography and Base Styles */
+body {
   font-family: "Urbanist", sans-serif;
   font-optical-sizing: auto;
   font-style: normal;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-
-
-
-.icon-box {
-  @apply w-12 h-12 flex items-center justify-center rounded-full bg-[#1a1a1a] 
-  transition duration-300 ease-in-out cursor-pointer;
+/* Navigation Enhancements */
+.nav-glow {
+  @apply transition-all duration-300 ease-out rounded-lg px-3 py-2
+         hover:bg-primary/10 hover:text-primary hover:scale-105;
 }
 
-.icon-box:hover {
-  box-shadow: 0 0 12px rgba(255, 255, 255, 0.25);
-  transform: scale(1.15);
-  background-color: #222;
-}
-
-
+/* Animation Classes */
 @keyframes float {
   0%, 100% {
     transform: translateY(0);
@@ -44,20 +98,6 @@ body{
 .animate-float {
   animation: float 3s ease-in-out infinite;
 }
-
-
-.nav-glow {
-  @apply transition-all duration-300 ease-out rounded-lg px-3 py-1;
-}
-
-.nav-glow:hover {
-  background: rgba(253, 199, 1, 0.15);
-  box-shadow: 0 0 12px rgba(253, 199, 1, 0.4);
-  transform: scale(1.05);
-  cursor: pointer;
-}
-
-
 
 @keyframes scaleIn {
   0% {
@@ -72,4 +112,71 @@ body{
 
 .animate-scaleIn {
   animation: scaleIn 0.2s ease-out;
+}
+
+@keyframes slideInUp {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideInUp {
+  animation: slideInUp 0.4s ease-out;
+}
+
+/* Grid System for Contest Cards (Requirements 4.4) */
+.contest-grid {
+  @apply grid gap-6;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+@media (min-width: 1024px) {
+  .contest-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .contest-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .contest-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .contest-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Responsive Utilities */
+.container-responsive {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Icon Enhancements */
+.icon-box {
+  @apply w-12 h-12 flex items-center justify-center rounded-full 
+         bg-base-200 hover:bg-primary/10 hover:text-primary
+         transition-all duration-300 ease-in-out cursor-pointer
+         hover:scale-110 hover:shadow-lg;
+}
+
+/* Ensure proper contrast ratios in both themes */
+[data-theme="contest-light"] {
+  color-scheme: light;
+}
+
+[data-theme="contest-dark"] {
+  color-scheme: dark;
 }

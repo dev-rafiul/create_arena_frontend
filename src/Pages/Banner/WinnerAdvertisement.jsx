@@ -27,7 +27,7 @@ const winners = [
 
 const WinnerAdvertisement = () => {
   return (
-    <section className="py-24 bg-gradient-to-r from-[#fff7e6] rounded-xl to-[#fff]">
+    <section className="py-24  rounded-xl">
       <div className="max-w-7xl mx-auto px-6">
 
       

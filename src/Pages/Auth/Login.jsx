@@ -87,7 +87,7 @@ const Login = () => {
     <div className="min-h-screen w-full grid grid-cols-1 justify-center items-center py-10 px-4">
       <title>Log In | Create Arena</title>
 
-      <div className="w-full max-w-md space-y-6 bg-white p-8 rounded-2xl shadow-xl">
+      <div className="w-full max-w-md space-y-6 p-8 rounded-2xl shadow-xl">
         <div className="text-center">
           <h4 className="text-4xl mb-4 font-bold bg-gradient-to-r from-secondary to-green-600 bg-clip-text text-transparent">
             Welcome Back!
@@ -133,7 +133,7 @@ const Login = () => {
                 }
               })}
               type="email"
-              className="w-full border-b rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition duration-200"
+              className="w-full border-b px-4 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition duration-200 border-black"
               placeholder="Enter your email"
             />
             {errors.email && (
@@ -160,7 +160,7 @@ const Login = () => {
                   }
                 })}
                 type={showPassword ? "text" : "password"}
-                className="w-full border-b rounded-lg px-4 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition duration-200"
+                className="w-full border-b border-black px-4 py-2 pr-12 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition duration-200"
                 placeholder="Enter your password"
               />
               <button

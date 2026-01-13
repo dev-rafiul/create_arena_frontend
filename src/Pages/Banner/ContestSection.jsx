@@ -45,7 +45,7 @@ const ContestSection = ({ searchText }) => {
   }
 
   return (
-    <section className="py-20 bg-white">
+    <section className="py-20">
       <div className="max-w-7xl mx-auto px-6">
 
       
@@ -61,7 +61,7 @@ const ContestSection = ({ searchText }) => {
           {popularContests.map((contest) => (
             <div
               key={contest._id}
-              className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col"
+              className=" rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden flex flex-col"
             >
               
               <div className="relative">

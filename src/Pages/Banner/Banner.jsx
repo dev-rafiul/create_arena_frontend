@@ -3,7 +3,7 @@ import banner1 from "../../assets/banners/banner1.jpg";
 
 const Banner = ({ searchText, setSearchText }) => {
   return (
-    <div className="w-full bg-white">
+    <div className="w-full">
       <div className="max-w-7xl mx-auto px-6 py-10 grid md:grid-cols-2 gap-4 items-center">
 
   

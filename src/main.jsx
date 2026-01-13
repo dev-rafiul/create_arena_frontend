@@ -5,6 +5,7 @@ import App from './App.jsx'
 import { RouterProvider } from 'react-router'
 import { router } from './Routes/router';
 import AuthProvider from './Components/Context/AuthProvider.jsx'
+import { ThemeProvider } from './contexts/ThemeContext.jsx'
 import { Toaster } from 'react-hot-toast'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
@@ -17,10 +18,12 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <Toaster position="top-center" />
-    <RouterProvider router={router}/>
-    </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <Toaster position="top-center" />
+          <RouterProvider router={router}/>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   </StrictMode>,
 )

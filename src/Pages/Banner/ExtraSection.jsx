@@ -3,7 +3,7 @@ import { FaRocket, FaUsers, FaShieldAlt, FaLightbulb } from "react-icons/fa";
 
 const ExtraSection = () => {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24">
       <div className="max-w-7xl mx-auto px-6">
 
         

@@ -131,7 +131,7 @@ const handleCreatorAccess = async (data) => {
 
   return (
     <div className="w-full flex justify-center py-10 px-4">
-      <div className="w-full max-w-md bg-white shadow-xl p-6 rounded-xl">
+      <div className="w-full max-w-md shadow-xl p-6 rounded-xl">
         <h4 className="text-3xl text-center font-bold mb-6 mt-6 pb-6">
           Apply for Creator Role
         </h4>
