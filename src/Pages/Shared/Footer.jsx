@@ -69,8 +69,8 @@ const Footer = () => {
               <h3 className="text-xl font-semibold mb-3 text-yellow-400">SOCIAL</h3>
               <ul className="space-y-2">
                 <li><a className="text-gray-300 hover:text-white" href="#">Dribbble</a></li>
-                <li><a className="text-gray-300 hover:text-white" href="#">LinkedIn</a></li>
-                <li><a className="text-gray-300 hover:text-white" href="#">Instagram</a></li>
+                <li><a className="text-gray-300 hover:text-white" href="linkedin.com/in/dev-rafi">LinkedIn</a></li>
+                <li><a className="text-gray-300 hover:text-white" href="https://www.instagram.com/rafiulri/">Instagram</a></li>
               </ul>
             </div>
 
@@ -91,13 +91,13 @@ const Footer = () => {
              
               <a className="icon-box">
                 <span className="text-white font-semibold text-lg">
-                    <SocialIcon url="https://www.linkedin.com/in/rafiulislam040/" />
+                    <SocialIcon url="https://www.linkedin.com/in/dev-rafi/" />
                 </span>
               </a>
 
               <a className="icon-box">
                 <span className="text-white font-semibold text-lg">
-                    <SocialIcon url="https://www.facebook.com/rafiulislam22" />
+                    <SocialIcon url="https://www.facebook.com/devrafiul0" />
                 </span>
               </a>
               <a className="icon-box">
@@ -107,7 +107,7 @@ const Footer = () => {
               </a>
               <a className="icon-box">
                 <span className="text-white font-semibold text-lg">
-                    <SocialIcon url="https://github.com/rafiul040" />
+                    <SocialIcon url="https://github.com/dev-rafiul" />
                 </span>
               </a>
               <a className="icon-box">
